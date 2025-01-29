@@ -3,7 +3,6 @@ import 'package:neuroanatomy/cubits/auth_cubit/auth_cubit.dart';
 import 'package:neuroanatomy/models/note.dart';
 import 'package:neuroanatomy/models/segmento_cerebro.dart';
 import 'package:neuroanatomy/pages/note_form_page/note_form_page.dart';
-import 'package:neuroanatomy/services/chat_gpt_service.dart';
 import 'package:neuroanatomy/services/notes_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

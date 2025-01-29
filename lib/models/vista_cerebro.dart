@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/rendering.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:neuroanatomy/json_converters/path_converter.dart';
-import 'package:neuroanatomy/models/segmento_cerebro.dart';
 
 part 'vista_cerebro.g.dart';
 

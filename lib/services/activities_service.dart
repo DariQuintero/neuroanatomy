@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:neuroanatomy/models/activity.dart';
-import 'package:neuroanatomy/models/note.dart';
 
 class ActivitiesService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

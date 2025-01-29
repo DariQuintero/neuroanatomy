@@ -34,6 +34,7 @@ class NeuroAnatomy extends StatelessWidget {
       child: MaterialApp(
         title: 'NeuroAnatomy',
         theme: mainTheme(),
+        debugShowCheckedModeBanner: false,
         home: BlocProvider<AuthCubit>(
           create: (context) =>
               AuthCubit(authRepository: context.read<AuthRepository>()),

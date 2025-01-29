@@ -5,7 +5,9 @@ import 'package:neuroanatomy/cubits/auth_cubit/auth_cubit.dart';
 import 'package:neuroanatomy/cubits/cortes_cubit.dart/cortes_cubit.dart';
 import 'package:neuroanatomy/extensions/context_extension.dart';
 import 'package:neuroanatomy/models/corte_cerebro.dart';
+import 'package:neuroanatomy/models/diagrama.dart';
 import 'package:neuroanatomy/models/segmento_cerebro.dart';
+import 'package:neuroanatomy/pages/diagramas_page/diagramas_page.dart';
 import 'package:neuroanatomy/pages/home_page/widgets/estructura_details_panel.dart';
 import 'package:neuroanatomy/services/cortes_service.dart';
 import 'package:neuroanatomy/widgets/interactive_ilustracion.dart';
@@ -33,10 +35,36 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocProvider<CortesCubit>(
-        create: (context) => CortesCubit(CortesService())..getCortes(),
-        child: BlocConsumer<CortesCubit, CortesState>(
+    return BlocProvider<CortesCubit>(
+      create: (context) => CortesCubit(CortesService())..getCortes(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('NeuroAnatomy'),
+          actions: [
+            IconButton(
+              onPressed: () {
+                context.read<AuthCubit>().logout();
+              },
+              icon: const Icon(Icons.logout),
+            ),
+          ],
+          leading: PopupMenuButton<DiagramaType>(
+            itemBuilder: (context) {
+              return DiagramaType.values.map((type) {
+                return PopupMenuItem(
+                  value: type,
+                  child: Text(type.title),
+                );
+              }).toList();
+            },
+            onSelected: (value) {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return DiagramasPage(type: value);
+              }));
+            },
+          ),
+        ),
+        body: BlocConsumer<CortesCubit, CortesState>(
           listener: (context, state) {
             if (state is CortesReady) {
               if (!panelController.isAttached) return;
@@ -68,19 +96,6 @@ class _HomePageState extends State<HomePage> {
 
             return Stack(
               children: [
-                Positioned(
-                  left: 18,
-                  top: 36,
-                  child: GestureDetector(
-                    onTap: () {
-                      context.read<AuthCubit>().logout();
-                    },
-                    child: Text(
-                      state.selectedCorte.nombre,
-                      style: context.theme.textTheme.titleLarge,
-                    ),
-                  ),
-                ),
                 _buildBody(context, state),
                 _buildFab(context),
               ],

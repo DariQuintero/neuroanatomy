@@ -11,7 +11,6 @@ class CortesService {
         await _firestore.collection('cortes').get();
     // for each document in the querySnapshot get segmentos
     final List<Map<String, dynamic>> cortesJson = [];
-    final List<Map<String, dynamic>> vistasJson = [];
     for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
         in querySnapshot.docs) {
       final corteJson = doc.data();
