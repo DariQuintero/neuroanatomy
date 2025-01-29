@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:neuroanatomy/models/corte_cerebro.dart';
 import 'package:neuroanatomy/models/ilustracion_cerebro.dart';
 import 'package:neuroanatomy/models/segmento_cerebro.dart';
+import 'package:neuroanatomy/painters/cerebro1/lateral_izquierdo/corte_de_charcot.dart';
 import 'package:neuroanatomy/painters/cerebro1/lateral_izquierdo/giro_precentral.dart';
 import 'package:neuroanatomy/painters/cerebro1/lateral_izquierdo/giro_temporal_superior.dart';
 
@@ -13,6 +15,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<bool> segmentosTocados = [false, false];
+  bool showCortes = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,54 +31,87 @@ class _HomePageState extends State<HomePage> {
           painter: GiroPrecentral(highlight: segmentosTocados[0]),
         ),
         SegmentoCerebro(
-            nombre: 'Giro Temporal Superior',
-            painter: GiroTemporalSuperior(highlight: segmentosTocados[1])),
+          nombre: 'Giro Temporal Superior',
+          painter: GiroTemporalSuperior(highlight: segmentosTocados[1]),
+        ),
+      ],
+      cortes: [
+        CorteCerebro(
+          nombre: 'Corte de Chartcot',
+          painter: CorteDeCharcot(),
+        )
       ],
     );
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.layers),
+            onPressed: () {
+              setState(() {
+                showCortes = !showCortes;
+              });
+            },
+          )
+        ],
       ),
-      body: Column(
-        children: [
-          Stack(
-            children: [
-              Container(
-                // show the border with red color
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.red),
+      body: Center(
+        child: Stack(
+          children: [
+            Image.asset(
+              ilustracion.realPath,
+              width: width,
+              height: width * aspectRatio,
+              fit: BoxFit.cover,
+            ),
+            ...ilustracion.segmentos.map((segmento) {
+              return GestureDetector(
+                child: CustomPaint(
+                  size: Size(width, width * aspectRatio),
+                  painter: segmento.painter,
                 ),
-                child: Image.asset(
-                  ilustracion.realPath,
-                  width: width,
-                  height: width * aspectRatio,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              ...ilustracion.segmentos.map((segmento) {
+                onTapDown: (details) {
+                  setState(() {
+                    segmentosTocados[ilustracion.segmentos.indexOf(segmento)] =
+                        true;
+                  });
+                },
+                onTapUp: (details) {
+                  setState(() {
+                    segmentosTocados[ilustracion.segmentos.indexOf(segmento)] =
+                        false;
+                  });
+                },
+                onTap: () {
+                  // show snackbar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(segmento.nombre),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+            if (showCortes)
+              ...ilustracion.cortes.map((corte) {
                 return GestureDetector(
                   child: CustomPaint(
                     size: Size(width, width * aspectRatio),
-                    painter: segmento.painter,
+                    painter: corte.painter,
                   ),
-                  onTapDown: (details) {
-                    setState(() {
-                      segmentosTocados[
-                          ilustracion.segmentos.indexOf(segmento)] = true;
-                    });
+                  onTap: () {
+                    // show snackbar
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(corte.nombre),
+                      ),
+                    );
                   },
-                  onTapUp: (details) {
-                    setState(() {
-                      segmentosTocados[
-                          ilustracion.segmentos.indexOf(segmento)] = false;
-                    });
-                  },
-                  onTap: () {},
                 );
-              }).toList(),
-            ],
-          ),
-        ],
+              }),
+          ],
+        ),
       ),
     );
   }

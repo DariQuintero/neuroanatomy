@@ -190,7 +190,7 @@ class GiroPrecentral extends CustomPainter {
       canvas.drawPath(
         contorno,
         Paint()
-          ..color = Colors.red
+          ..color = Colors.black.withOpacity(0.5)
           ..style = PaintingStyle.fill,
       );
     }
