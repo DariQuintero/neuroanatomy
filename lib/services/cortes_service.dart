@@ -6,20 +6,12 @@ class CortesService {
 
   CortesService();
 
-  Future<void> getCorteById(String corteId) async {
-    final DocumentSnapshot<Map<String, dynamic>> doc = await _firestore
-        .collection('cortes')
-        .where('id', isEqualTo: corteId)
-        .get()
-        .then((value) => value.docs.first);
-    print(doc.data());
-  }
-
   Future<List<CorteCerebro>> getCortes() async {
     final QuerySnapshot<Map<String, dynamic>> querySnapshot =
         await _firestore.collection('cortes').get();
     // for each document in the querySnapshot get segmentos
     final List<Map<String, dynamic>> cortesJson = [];
+    final List<Map<String, dynamic>> vistasJson = [];
     for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
         in querySnapshot.docs) {
       final corteJson = doc.data();
@@ -35,7 +27,21 @@ class CortesService {
         segmentosJson.add(doc.data());
       }
 
+      final QuerySnapshot<Map<String, dynamic>> querySnapshotVistas =
+          await _firestore
+              .collection('cortes')
+              .doc(doc.id)
+              .collection('vistas')
+              .get();
+      // add segmentos to corteJson
+      final List<Map<String, dynamic>> vistasJson = [];
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+          in querySnapshotVistas.docs) {
+        vistasJson.add(doc.data());
+      }
+
       corteJson['segmentos'] = segmentosJson;
+      corteJson['vistas'] = vistasJson;
       cortesJson.add(corteJson);
     }
 

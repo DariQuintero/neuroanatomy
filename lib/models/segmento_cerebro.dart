@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:neuroanatomy/json_converters/path_converter.dart';
 
@@ -6,7 +7,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'segmento_cerebro.g.dart';
 
 @JsonSerializable()
-class SegmentoCerebro {
+class SegmentoCerebro extends Equatable {
   @JsonKey()
   final String id;
 
@@ -16,7 +17,7 @@ class SegmentoCerebro {
   @SvgPathConverter()
   final Path path;
 
-  SegmentoCerebro({
+  const SegmentoCerebro({
     required this.id,
     required this.nombre,
     required this.path,
@@ -26,4 +27,11 @@ class SegmentoCerebro {
       _$SegmentoCerebroFromJson(json);
 
   Map<String, dynamic> toJson() => _$SegmentoCerebroToJson(this);
+
+  @override
+  List<Object?> get props => [
+        id,
+        nombre,
+        path,
+      ];
 }

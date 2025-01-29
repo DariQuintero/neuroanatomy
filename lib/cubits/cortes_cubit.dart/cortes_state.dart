@@ -15,14 +15,18 @@ class CortesReady extends CortesState {
   final List<CorteCerebro> cortes;
   final CorteCerebro selectedCorte;
   final SegmentoCerebro? selectedSegmento;
+  final bool isShowingVistas;
 
-  const CortesReady(
-      {required this.cortes,
-      required this.selectedCorte,
-      this.selectedSegmento});
+  const CortesReady({
+    required this.cortes,
+    required this.selectedCorte,
+    this.selectedSegmento,
+    this.isShowingVistas = false,
+  });
 
   @override
-  List<Object?> get props => [cortes, selectedCorte, selectedSegmento];
+  List<Object?> get props =>
+      [cortes, selectedCorte, selectedSegmento, isShowingVistas];
 }
 
 class CortesError extends CortesState {

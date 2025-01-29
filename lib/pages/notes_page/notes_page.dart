@@ -28,7 +28,6 @@ class _NotesPageState extends State<NotesPage> {
           IconButton(
             onPressed: () async {
               // show snackbar and hide it after future completes
-              print("HOLA");
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Generating Quiz...'),

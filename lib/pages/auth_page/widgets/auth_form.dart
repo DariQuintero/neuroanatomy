@@ -41,6 +41,7 @@ class _AuthFormState extends State<AuthForm> {
             decoration: roundedTextInputDecoration.copyWith(
               labelText: 'Contraseña',
             ),
+            obscureText: true,
           ),
           if (!isLogin) ...[
             const SizedBox(height: 12),

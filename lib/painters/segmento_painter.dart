@@ -4,6 +4,7 @@ class SegmentoPainter extends CustomPainter {
   final Path segmento;
   final bool isHighlighted;
   final Size cerebroSize;
+  final Color highlightColor;
 
   Path scaledPath = Path();
 
@@ -11,6 +12,7 @@ class SegmentoPainter extends CustomPainter {
     required this.segmento,
     required this.isHighlighted,
     required this.cerebroSize,
+    required this.highlightColor,
   });
 
   @override
@@ -24,24 +26,11 @@ class SegmentoPainter extends CustomPainter {
     ).storage);
 
     final paint = Paint()
-      ..color = Colors.blue.withOpacity(0.4)
+      ..color = isHighlighted ? highlightColor : Colors.transparent
       ..style = PaintingStyle.fill
       ..strokeWidth = 2;
 
-    // print the path to the console
-
     canvas.drawPath(scaledPath, paint);
-
-    // show the border of the canvas
-    final borderPaint = Paint()
-      ..color = Colors.red
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      borderPaint,
-    );
   }
 
   @override

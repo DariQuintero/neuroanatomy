@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:neuroanatomy/extensions/context_extension.dart';
+import 'package:neuroanatomy/models/corte_cerebro.dart';
 import 'package:neuroanatomy/models/segmento_cerebro.dart';
+import 'package:neuroanatomy/pages/home_page/widgets/other_cortes_grid.dart';
 import 'package:neuroanatomy/widgets/drag_indicator.dart';
 
 class EstructuraDetailsPanel extends StatelessWidget {
   final ScrollController scrollController;
   final SegmentoCerebro segmento;
+  final List<CorteCerebro> allCortes;
   const EstructuraDetailsPanel(
-      {super.key, required this.scrollController, required this.segmento});
+      {super.key,
+      required this.scrollController,
+      required this.segmento,
+      required this.allCortes});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +68,12 @@ class EstructuraDetailsPanel extends StatelessWidget {
                   ),
                 ),
               ],
-            )
+            ),
+            const SizedBox(height: 8.0),
+            SizedBox(
+                height: context.mediaQuery.size.height * 0.25,
+                child: OtherCortesGrid(
+                    allCortes: allCortes, currentSegmento: segmento)),
           ],
         ),
       ),

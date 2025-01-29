@@ -5,7 +5,7 @@ class NoteFormPage extends StatefulWidget {
   final Function(Note) onCreateNote;
   final String structureId;
   final Note? note;
-  NoteFormPage(
+  const NoteFormPage(
       {super.key,
       required this.structureId,
       required this.onCreateNote,

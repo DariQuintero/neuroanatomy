@@ -3,39 +3,31 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neuroanatomy/cubits/corte_interactivo/corte_interactivo_cubit.dart';
 import 'package:neuroanatomy/models/corte_cerebro.dart';
 import 'package:neuroanatomy/models/segmento_cerebro.dart';
+import 'package:neuroanatomy/models/vista_cerebro.dart';
 import 'package:neuroanatomy/painters/segmento_painter.dart';
+import 'package:neuroanatomy/painters/vista_painter.dart';
 
-class InteractiveIlustracion extends StatefulWidget {
+class InteractiveIlustracion extends StatelessWidget {
   final CorteCerebro corteCerebro;
   final Function(SegmentoCerebro estructura)? onEstructuraTap;
-  final bool showCortes;
-  final List<SegmentoCerebro> highlightedEstructuras;
+  final Function(VistaCerebro vista)? onVistaTap;
+  final bool showVistas;
+  final List<SegmentoCerebro> highlightedSegmentos;
 
   const InteractiveIlustracion({
     super.key,
     required this.corteCerebro,
     this.onEstructuraTap,
-    this.highlightedEstructuras = const [],
-    this.showCortes = false,
+    this.onVistaTap,
+    this.highlightedSegmentos = const [],
+    this.showVistas = false,
   });
-
-  @override
-  State<InteractiveIlustracion> createState() => _InteractiveIlustracionState();
-}
-
-class _InteractiveIlustracionState extends State<InteractiveIlustracion> {
-  bool imageLoaded = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CorteInteractivoCubit>(
         create: (context) =>
-            CorteInteractivoCubit(corte: widget.corteCerebro)..getImage(),
+            CorteInteractivoCubit(corte: corteCerebro)..getImage(),
         child: BlocBuilder<CorteInteractivoCubit, CorteInteractivoState>(
           builder: (context, state) {
             if (state is CorteInteractivoLoading ||
@@ -49,54 +41,66 @@ class _InteractiveIlustracionState extends State<InteractiveIlustracion> {
               );
             }
             final readyState = (state as CorteInteractivoReady);
-            return SizedBox(
-              width: readyState.image.width.toDouble(),
-              height: readyState.image.height.toDouble(),
-              child: Stack(
+            return LayoutBuilder(builder: (context, constraints) {
+              final width = constraints.maxWidth;
+              return Stack(
                 children: [
-                  // render image
                   Image.memory(
                     readyState.bytes,
                     fit: BoxFit.cover,
                     gaplessPlayback: true,
                     filterQuality: FilterQuality.high,
                   ),
-                  ...widget.corteCerebro.segmentos.map((segmento) {
+                  ...corteCerebro.segmentos.map((segmento) {
                     return GestureDetector(
                         child: CustomPaint(
                           size: Size(
-                            readyState.image.width.toDouble(),
-                            readyState.image.height.toDouble(),
+                            width,
+                            width *
+                                (readyState.image.height /
+                                    readyState.image.width),
                           ),
                           painter: SegmentoPainter(
                             segmento: segmento.path,
-                            isHighlighted: widget.highlightedEstructuras
-                                .contains(segmento),
+                            isHighlighted:
+                                highlightedSegmentos.contains(segmento),
                             cerebroSize: Size(
                               readyState.image.width.toDouble(),
                               readyState.image.height.toDouble(),
                             ),
+                            highlightColor: Colors.green.withOpacity(0.5),
                           ),
                         ),
                         onTap: () {
-                          widget.onEstructuraTap?.call(segmento);
+                          onEstructuraTap?.call(segmento);
                         });
                   }).toList(),
-                  // if (showCortes)
-                  //   ...ilustracion.cortes.map((corte) {
-                  //     return GestureDetector(
-                  //       child: CustomPaint(
-                  //         size: Size(width, width * aspectRatio),
-                  //         painter: corte.painter,
-                  //       ),
-                  //       onTap: () {
-                  //         onCorteTap?.call(corte);
-                  //       },
-                  //     );
-                  //   }),
+                  if (showVistas)
+                    ...corteCerebro.vistas.map((vista) {
+                      return GestureDetector(
+                        child: CustomPaint(
+                          size: Size(
+                            width,
+                            width *
+                                (readyState.image.height /
+                                    readyState.image.width),
+                          ),
+                          painter: VistaPainter(
+                            cerebroSize: Size(
+                              readyState.image.width.toDouble(),
+                              readyState.image.height.toDouble(),
+                            ),
+                            vista: vista.path,
+                          ),
+                        ),
+                        onTap: () {
+                          onVistaTap?.call(vista);
+                        },
+                      );
+                    }),
                 ],
-              ),
-            );
+              );
+            });
           },
         ));
   }

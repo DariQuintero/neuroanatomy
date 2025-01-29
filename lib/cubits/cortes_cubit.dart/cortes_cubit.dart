@@ -24,10 +24,16 @@ class CortesCubit extends Cubit<CortesState> {
 
   void selectCorte(CorteCerebro corte) {
     if (state is! CortesReady) return;
+    final currentSelectedSegmento = (state as CortesReady).selectedSegmento;
+    final segmentoInNewCorte = corte.segmentos.firstWhereOrNull(
+      (s) => s.id == currentSelectedSegmento?.id,
+    );
     emit(
       CortesReady(
         cortes: (state as CortesReady).cortes,
         selectedCorte: corte,
+        selectedSegmento: segmentoInNewCorte,
+        isShowingVistas: (state as CortesReady).isShowingVistas,
       ),
     );
   }
@@ -47,6 +53,7 @@ class CortesCubit extends Cubit<CortesState> {
         cortes: (state as CortesReady).cortes,
         selectedCorte: (state as CortesReady).selectedCorte,
         selectedSegmento: segmento,
+        isShowingVistas: (state as CortesReady).isShowingVistas,
       ),
     );
   }
@@ -59,5 +66,17 @@ class CortesCubit extends Cubit<CortesState> {
         .firstWhereOrNull((s) => s.id == id);
     if (segmento == null) return;
     selectSegmento(segmento);
+  }
+
+  void toggleShowingVistas() {
+    if (state is! CortesReady) return;
+    emit(
+      CortesReady(
+        cortes: (state as CortesReady).cortes,
+        selectedCorte: (state as CortesReady).selectedCorte,
+        selectedSegmento: (state as CortesReady).selectedSegmento,
+        isShowingVistas: !(state as CortesReady).isShowingVistas,
+      ),
+    );
   }
 }

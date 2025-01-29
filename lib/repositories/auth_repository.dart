@@ -11,16 +11,9 @@ class AuthRepository {
         password: password,
       );
       return credentials.user!;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
     } catch (e) {
       throw Exception(e);
     }
-    return null;
   }
 
   Future<User?> signUp(String email, String password) async {

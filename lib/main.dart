@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neuroanatomy/cubits/auth_cubit/auth_cubit.dart';
 import 'package:neuroanatomy/pages/auth_page/auth_page.dart';
 import 'package:neuroanatomy/pages/home_page/home_page.dart';
-import 'package:neuroanatomy/pages/notes_page/notes_page.dart';
-import 'package:neuroanatomy/pages/prueba/prueba.dart';
 import 'package:neuroanatomy/repositories/auth_repository.dart';
 import 'package:neuroanatomy/theme.dart';
 import 'firebase_options.dart';

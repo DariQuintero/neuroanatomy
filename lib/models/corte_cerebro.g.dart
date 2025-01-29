@@ -13,6 +13,12 @@ CorteCerebro _$CorteCerebroFromJson(Map<String, dynamic> json) => CorteCerebro(
           .map((e) => SegmentoCerebro.fromJson(e as Map<String, dynamic>))
           .toList(),
       realImage: json['realImage'] as String,
+      vistas: (json['vistas'] as List<dynamic>?)
+              ?.map((e) => VistaCerebro.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      derechaId: json['derechaId'] as String?,
+      izquierdaId: json['izquierdaId'] as String?,
     );
 
 Map<String, dynamic> _$CorteCerebroToJson(CorteCerebro instance) =>
@@ -21,4 +27,7 @@ Map<String, dynamic> _$CorteCerebroToJson(CorteCerebro instance) =>
       'nombre': instance.nombre,
       'realImage': instance.realImage,
       'segmentos': instance.segmentos,
+      'vistas': instance.vistas,
+      'derechaId': instance.derechaId,
+      'izquierdaId': instance.izquierdaId,
     };
