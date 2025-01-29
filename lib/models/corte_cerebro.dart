@@ -5,6 +5,8 @@ import 'package:neuroanatomy/models/vista_cerebro.dart';
 
 part 'corte_cerebro.g.dart';
 
+enum ImageMode { real, aquarela }
+
 @JsonSerializable()
 class CorteCerebro extends Equatable {
   @JsonKey()
@@ -31,6 +33,15 @@ class CorteCerebro extends Equatable {
   @JsonKey()
   final String? izquierdaId;
 
+  @JsonKey()
+  final String? arribaId;
+
+  @JsonKey()
+  final String? abajoId;
+
+  @JsonKey()
+  final String? atrasId;
+
   const CorteCerebro({
     required this.id,
     required this.nombre,
@@ -40,6 +51,9 @@ class CorteCerebro extends Equatable {
     this.aquarelaImage,
     this.derechaId,
     this.izquierdaId,
+    this.arribaId,
+    this.abajoId,
+    this.atrasId,
   });
 
   factory CorteCerebro.fromJson(Map<String, dynamic> json) =>
@@ -56,6 +70,18 @@ class CorteCerebro extends Equatable {
         realImage,
         derechaId,
         izquierdaId,
+        arribaId,
+        abajoId,
+        atrasId,
         aquarelaImage,
       ];
+
+  String? imageUrlForMode(ImageMode mode) {
+    switch (mode) {
+      case ImageMode.real:
+        return realImage;
+      case ImageMode.aquarela:
+        return aquarelaImage;
+    }
+  }
 }

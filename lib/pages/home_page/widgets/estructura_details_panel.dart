@@ -10,11 +10,15 @@ class EstructuraDetailsPanel extends StatelessWidget {
   final ScrollController scrollController;
   final SegmentoCerebro segmento;
   final List<CorteCerebro> allCortes;
-  const EstructuraDetailsPanel(
-      {super.key,
-      required this.scrollController,
-      required this.segmento,
-      required this.allCortes});
+  final ImageMode imageMode;
+
+  const EstructuraDetailsPanel({
+    super.key,
+    required this.scrollController,
+    required this.segmento,
+    required this.allCortes,
+    required this.imageMode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -78,9 +82,13 @@ class EstructuraDetailsPanel extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             SizedBox(
-                height: context.mediaQuery.size.height * 0.25,
-                child: OtherCortesGrid(
-                    allCortes: allCortes, currentSegmento: segmento)),
+              height: context.mediaQuery.size.height * 0.25,
+              child: OtherCortesGrid(
+                allCortes: allCortes,
+                currentSegmento: segmento,
+                imageMode: imageMode,
+              ),
+            ),
           ],
         ),
       ),

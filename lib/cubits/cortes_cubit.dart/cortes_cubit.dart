@@ -34,6 +34,7 @@ class CortesCubit extends Cubit<CortesState> {
         selectedCorte: corte,
         selectedSegmento: segmentoInNewCorte,
         isShowingVistas: (state as CortesReady).isShowingVistas,
+        imageMode: (state as CortesReady).imageMode,
       ),
     );
   }
@@ -54,6 +55,7 @@ class CortesCubit extends Cubit<CortesState> {
         selectedCorte: (state as CortesReady).selectedCorte,
         selectedSegmento: segmento,
         isShowingVistas: (state as CortesReady).isShowingVistas,
+        imageMode: (state as CortesReady).imageMode,
       ),
     );
   }
@@ -76,6 +78,20 @@ class CortesCubit extends Cubit<CortesState> {
         selectedCorte: (state as CortesReady).selectedCorte,
         selectedSegmento: (state as CortesReady).selectedSegmento,
         isShowingVistas: !(state as CortesReady).isShowingVistas,
+        imageMode: (state as CortesReady).imageMode,
+      ),
+    );
+  }
+
+  void changeImageMode(ImageMode mode) {
+    if (state is! CortesReady) return;
+    emit(
+      CortesReady(
+        cortes: (state as CortesReady).cortes,
+        selectedCorte: (state as CortesReady).selectedCorte,
+        selectedSegmento: (state as CortesReady).selectedSegmento,
+        isShowingVistas: (state as CortesReady).isShowingVistas,
+        imageMode: mode,
       ),
     );
   }

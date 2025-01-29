@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -19,89 +20,51 @@ class CorteInteractivoCubit extends Cubit<CorteInteractivoState> {
   Future<void> getImages() async {
     emit(CorteInteractivoLoading());
     try {
-      final cachedImage = await _getImageFromCache();
-      if (cachedImage != null) {
-        final decodedImage = await decodeImageFromList(cachedImage);
-        if (isClosed) return;
-        emit(
-          CorteInteractivoReady(
-            currentImage:
-                DisplayableImage(image: decodedImage, bytes: cachedImage),
-          ),
-        );
-        _getAlternativeImages();
-        return;
-      }
-      final data = await NetworkAssetBundle(Uri.parse(corte.realImage))
-          .load(corte.realImage);
-      final bytes = data.buffer.asUint8List();
-      _saveImageInCache(bytes);
-      final decodedImage = await decodeImageFromList(bytes);
+      final images = (await Future.wait(
+        ImageMode.values.map((mode) async {
+          final cachedImage = await _getImageFromCache(mode, corte.id);
+          if (cachedImage != null) {
+            final decodedImage = await decodeImageFromList(cachedImage);
+            return DisplayableImage(
+                image: decodedImage, bytes: cachedImage, mode: mode);
+          }
+          final imageUrl = corte.imageUrlForMode(mode);
+          if (imageUrl == null) return null;
+          final data =
+              await NetworkAssetBundle(Uri.parse(imageUrl)).load(imageUrl);
+          final bytes = data.buffer.asUint8List();
+          final decodedImage = await decodeImageFromList(bytes);
+          _saveImageInCache(bytes, mode, corte.id);
+          return DisplayableImage(
+              image: decodedImage, bytes: bytes, mode: mode);
+        }),
+      ))
+          .whereType<DisplayableImage>()
+          .toList();
       if (isClosed) return;
+
       emit(CorteInteractivoReady(
-        currentImage: DisplayableImage(image: decodedImage, bytes: bytes),
+        images: images,
       ));
-      _getAlternativeImages();
     } catch (e) {
       if (isClosed) return;
       emit(CorteInteractivoError(message: e.toString()));
     }
   }
 
-  Future<void> toggleImage() async {
-    if (state is! CorteInteractivoReady) return;
-    final currentState = state as CorteInteractivoReady;
-    if (currentState.alternativeImages.isEmpty) return;
-    final nextImage = currentState.alternativeImages.last;
-    final nextAlternativeImages = currentState.alternativeImages
-      ..removeAt(0)
-      ..add(currentState.currentImage);
-    emit(
-      CorteInteractivoReady(
-        currentImage: nextImage,
-        alternativeImages: nextAlternativeImages,
-      ),
-    );
-  }
-
-  Future<void> _getAlternativeImages() async {
-    final alternativeUrls = [];
-    if (corte.aquarelaImage != null) {
-      alternativeUrls.add(corte.aquarelaImage);
-    }
-
-    for (final alternativeUlr in alternativeUrls) {
-      final data = await NetworkAssetBundle(Uri.parse(alternativeUlr))
-          .load(alternativeUlr);
-      final bytes = data.buffer.asUint8List();
-      final decodedImage = await decodeImageFromList(bytes);
-      if (isClosed) return;
-      if (state is! CorteInteractivoReady) return;
-      final currentState = state as CorteInteractivoReady;
-      emit(
-        CorteInteractivoReady(
-          currentImage: currentState.currentImage,
-          alternativeImages: [
-            ...currentState.alternativeImages,
-            DisplayableImage(image: decodedImage, bytes: bytes),
-          ],
-        ),
-      );
-    }
-  }
-
-  Future<File> _saveImageInCache(Uint8List bytes) async {
+  Future<File> _saveImageInCache(
+      Uint8List bytes, ImageMode mode, String corteId) async {
     final directory = await getTemporaryDirectory();
     final path = directory.path;
-    final file = File('$path/${corte.id}.png');
+    final file = File('$path/${mode.name}_${corteId}_v1.png');
     await file.writeAsBytes(bytes);
     return file;
   }
 
-  Future<Uint8List?> _getImageFromCache() async {
+  Future<Uint8List?> _getImageFromCache(ImageMode mode, String corteId) async {
     final directory = await getTemporaryDirectory();
     final path = directory.path;
-    final file = File('$path/${corte.id}.png');
+    final file = File('$path/${mode.name}_${corteId}_v1.png');
     if (!await file.exists()) return null;
     return file.readAsBytes();
   }

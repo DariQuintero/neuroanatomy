@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path_drawing/path_drawing.dart';
 
 class VistaPainter extends CustomPainter {
   final Path vista;
@@ -21,12 +22,18 @@ class VistaPainter extends CustomPainter {
       1,
     ).storage);
 
-    final paint = Paint()
-      ..color = Colors.lightGreen
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3;
+    final dashedPath = dashPath(
+      scaledPath,
+      dashArray: CircularIntervalList<double>(<double>[10.0, 10.0]),
+    );
 
-    canvas.drawPath(scaledPath, paint);
+    final paint = Paint()
+      ..color = Colors.black
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5;
+
+    canvas.drawPath(dashedPath, paint);
   }
 
   @override

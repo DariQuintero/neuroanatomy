@@ -16,17 +16,19 @@ class CortesReady extends CortesState {
   final CorteCerebro selectedCorte;
   final SegmentoCerebro? selectedSegmento;
   final bool isShowingVistas;
+  final ImageMode imageMode;
 
   const CortesReady({
     required this.cortes,
     required this.selectedCorte,
     this.selectedSegmento,
     this.isShowingVistas = false,
+    this.imageMode = ImageMode.real,
   });
 
   @override
   List<Object?> get props =>
-      [cortes, selectedCorte, selectedSegmento, isShowingVistas];
+      [cortes, selectedCorte, selectedSegmento, isShowingVistas, imageMode];
 }
 
 class CortesError extends CortesState {

@@ -12,16 +12,18 @@ class CorteInteractivoInitial extends CorteInteractivoState {}
 class CorteInteractivoLoading extends CorteInteractivoState {}
 
 class CorteInteractivoReady extends CorteInteractivoState {
-  final DisplayableImage currentImage;
-  final List<DisplayableImage> alternativeImages;
+  final List<DisplayableImage> images;
 
   const CorteInteractivoReady({
-    required this.currentImage,
-    this.alternativeImages = const [],
+    required this.images,
   });
 
   @override
-  List<Object> get props => [currentImage, alternativeImages];
+  List<Object> get props => [images];
+
+  DisplayableImage? imageForMode(ImageMode mode) {
+    return images.firstWhereOrNull((element) => element.mode == mode);
+  }
 }
 
 class CorteInteractivoError extends CorteInteractivoState {

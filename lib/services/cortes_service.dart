@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:neuroanatomy/models/corte_cerebro.dart';
 
 class CortesService {
@@ -44,6 +45,9 @@ class CortesService {
       cortesJson.add(corteJson);
     }
 
-    return cortesJson.map((e) => CorteCerebro.fromJson(e)).toList();
+    return cortesJson
+        .map((e) => CorteCerebro.fromJson(e))
+        .sorted((a, b) => a.id.compareTo(b.id))
+        .toList();
   }
 }

@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:neuroanatomy/cubits/auth_cubit/auth_cubit.dart';
 import 'package:neuroanatomy/cubits/cortes_cubit.dart/cortes_cubit.dart';
 import 'package:neuroanatomy/extensions/context_extension.dart';
@@ -94,6 +95,8 @@ class _HomePageState extends State<HomePage> {
               );
             }
 
+            print('image mode: ${state.imageMode}');
+
             return Stack(
               children: [
                 _buildBody(context, state),
@@ -118,9 +121,15 @@ class _HomePageState extends State<HomePage> {
             context.read<CortesCubit>().toggleShowingVistas();
           },
           backgroundColor: context.theme.colorScheme.primary,
-          child: const Icon(
-            Icons.edit,
-            color: Colors.white,
+          child: SizedBox(
+            width: 24,
+            child: SvgPicture.asset(
+              'assets/icons/surgical.svg',
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
+            ),
           ),
         ),
       ),
@@ -131,6 +140,7 @@ class _HomePageState extends State<HomePage> {
     final size = context.mediaQuery.size;
     final panelHeightOpen =
         (size.height * 0.5) - context.mediaQuery.padding.top;
+
     return SlidingUpPanel(
       controller: panelController,
       parallaxEnabled: true,
@@ -143,12 +153,27 @@ class _HomePageState extends State<HomePage> {
         topLeft: Radius.circular(28),
         topRight: Radius.circular(28),
       ),
-      body: Center(
-        child: Row(
+      body: Padding(
+        padding: EdgeInsets.only(bottom: context.mediaQuery.size.height * 0.2),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildIzquierdaButton(context),
-            Expanded(child: _buildInteractiveIlustration(cortesState, context)),
-            _buildDerechaButton(context),
+            Row(
+              children: [
+                Expanded(child: _buildAtrasButton(context)),
+                Expanded(child: _buildArribaButton(context)),
+                const Spacer(),
+              ],
+            ),
+            Row(
+              children: [
+                _buildIzquierdaButton(context),
+                Expanded(
+                    child: _buildInteractiveIlustration(cortesState, context)),
+                _buildDerechaButton(context),
+              ],
+            ),
+            _buildAbajoButton(context),
           ],
         ),
       ),
@@ -159,6 +184,7 @@ class _HomePageState extends State<HomePage> {
           segmento,
           cortesState.cortes,
           cortesState.selectedCorte,
+          cortesState.imageMode,
           context,
         );
       },
@@ -177,6 +203,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildIzquierdaButton(BuildContext context) {
+    bool transparent = false;
+    final state = context.read<CortesCubit>().state;
+    if (state is! CortesReady) {
+      transparent = true;
+    }
+
+    state as CortesReady;
+    final currentCorte = state.selectedCorte;
+    final izquierdaId = currentCorte.izquierdaId;
+    if (izquierdaId == null) {
+      transparent = true;
+    }
+
     return IconButton(
       onPressed: () {
         final state = context.read<CortesCubit>().state;
@@ -196,10 +235,24 @@ class _HomePageState extends State<HomePage> {
         context.read<CortesCubit>().selectCorte(corteTo);
       },
       icon: const Icon(Icons.arrow_back_ios),
+      color: transparent ? Colors.transparent : null,
     );
   }
 
   Widget _buildDerechaButton(BuildContext context) {
+    bool transparent = false;
+    final state = context.read<CortesCubit>().state;
+    if (state is! CortesReady) {
+      transparent = true;
+    }
+
+    state as CortesReady;
+    final currentCorte = state.selectedCorte;
+    final derechaId = currentCorte.derechaId;
+    if (derechaId == null) {
+      transparent = true;
+    }
+
     return IconButton(
       onPressed: () {
         final state = context.read<CortesCubit>().state;
@@ -220,6 +273,121 @@ class _HomePageState extends State<HomePage> {
         context.read<CortesCubit>().selectCorte(corteTo);
       },
       icon: const Icon(Icons.arrow_forward_ios),
+      color: transparent ? Colors.transparent : null,
+    );
+  }
+
+  Widget _buildArribaButton(BuildContext context) {
+    bool transparent = false;
+    final state = context.read<CortesCubit>().state;
+    if (state is! CortesReady) {
+      transparent = true;
+    }
+
+    state as CortesReady;
+    final currentCorte = state.selectedCorte;
+    final arribaId = currentCorte.arribaId;
+    if (arribaId == null) {
+      transparent = true;
+    }
+
+    return IconButton(
+      onPressed: () {
+        final state = context.read<CortesCubit>().state;
+        if (state is! CortesReady) {
+          return;
+        }
+        final currentCorte = state.selectedCorte;
+        final arribaId = currentCorte.arribaId;
+
+        final corteTo = state.cortes.firstWhereOrNull(
+          (corte) => corte.id == arribaId,
+        );
+
+        if (corteTo == null) {
+          return;
+        }
+
+        context.read<CortesCubit>().selectCorte(corteTo);
+      },
+      icon: const Icon(Icons.arrow_upward),
+      color: transparent ? Colors.transparent : null,
+    );
+  }
+
+  Widget _buildAbajoButton(BuildContext context) {
+    bool transparent = false;
+    final state = context.read<CortesCubit>().state;
+    if (state is! CortesReady) {
+      transparent = true;
+    }
+
+    state as CortesReady;
+    final currentCorte = state.selectedCorte;
+    final abajoId = currentCorte.abajoId;
+    if (abajoId == null) {
+      transparent = true;
+    }
+
+    return IconButton(
+      onPressed: () {
+        final state = context.read<CortesCubit>().state;
+        if (state is! CortesReady) {
+          return;
+        }
+        final currentCorte = state.selectedCorte;
+        final abajoId = currentCorte.abajoId;
+
+        final corteTo = state.cortes.firstWhereOrNull(
+          (corte) => corte.id == abajoId,
+        );
+
+        if (corteTo == null) {
+          return;
+        }
+
+        context.read<CortesCubit>().selectCorte(corteTo);
+      },
+      icon: const Icon(Icons.arrow_downward),
+      color: transparent ? Colors.transparent : null,
+    );
+  }
+
+  Widget _buildAtrasButton(BuildContext context) {
+    bool transparent = false;
+    final state = context.read<CortesCubit>().state;
+    if (state is! CortesReady) {
+      transparent = true;
+    }
+
+    state as CortesReady;
+    final currentCorte = state.selectedCorte;
+    final atrasId = currentCorte.atrasId;
+    if (atrasId == null) {
+      transparent = true;
+    }
+
+    return IconButton(
+      onPressed: () {
+        final state = context.read<CortesCubit>().state;
+        if (state is! CortesReady) {
+          return;
+        }
+        final currentCorte = state.selectedCorte;
+        final atrasId = currentCorte.atrasId;
+
+        final corteTo = state.cortes.firstWhereOrNull(
+          (corte) => corte.id == atrasId,
+        );
+
+        if (corteTo == null) {
+          return;
+        }
+
+        context.read<CortesCubit>().selectCorte(corteTo);
+      },
+      icon: const Icon(Icons.undo),
+      color: transparent ? Colors.transparent : null,
     );
   }
 
@@ -242,6 +410,10 @@ class _HomePageState extends State<HomePage> {
       highlightedSegmentos: cortesState.selectedSegmento != null
           ? [cortesState.selectedSegmento!]
           : [],
+      imageMode: cortesState.imageMode,
+      onImageModeChange: (mode) {
+        context.read<CortesCubit>().changeImageMode(mode);
+      },
     );
   }
 
@@ -250,6 +422,7 @@ class _HomePageState extends State<HomePage> {
     SegmentoCerebro? segmento,
     List<CorteCerebro> cortes,
     CorteCerebro currentCorte,
+    ImageMode imageMode,
     BuildContext context,
   ) {
     if (segmento == null) {
@@ -266,6 +439,7 @@ class _HomePageState extends State<HomePage> {
       segmento: segmento,
       scrollController: sc,
       allCortes: allCortesWithSegmento,
+      imageMode: imageMode,
     );
   }
 }

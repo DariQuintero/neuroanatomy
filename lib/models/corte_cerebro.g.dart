@@ -20,6 +20,9 @@ CorteCerebro _$CorteCerebroFromJson(Map<String, dynamic> json) => CorteCerebro(
       aquarelaImage: json['aquarelaImage'] as String?,
       derechaId: json['derechaId'] as String?,
       izquierdaId: json['izquierdaId'] as String?,
+      arribaId: json['arribaId'] as String?,
+      abajoId: json['abajoId'] as String?,
+      atrasId: json['atrasId'] as String?,
     );
 
 Map<String, dynamic> _$CorteCerebroToJson(CorteCerebro instance) =>
@@ -32,4 +35,7 @@ Map<String, dynamic> _$CorteCerebroToJson(CorteCerebro instance) =>
       'vistas': instance.vistas,
       'derechaId': instance.derechaId,
       'izquierdaId': instance.izquierdaId,
+      'arribaId': instance.arribaId,
+      'abajoId': instance.abajoId,
+      'atrasId': instance.atrasId,
     };

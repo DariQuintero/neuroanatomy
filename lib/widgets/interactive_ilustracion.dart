@@ -13,6 +13,8 @@ class InteractiveIlustracion extends StatelessWidget {
   final Function(VistaCerebro vista)? onVistaTap;
   final bool showVistas;
   final List<SegmentoCerebro> highlightedSegmentos;
+  final ImageMode imageMode;
+  final Function(ImageMode)? onImageModeChange;
 
   const InteractiveIlustracion({
     super.key,
@@ -21,6 +23,8 @@ class InteractiveIlustracion extends StatelessWidget {
     this.onVistaTap,
     this.highlightedSegmentos = const [],
     this.showVistas = false,
+    this.imageMode = ImageMode.real,
+    this.onImageModeChange,
   });
 
   @override
@@ -43,10 +47,18 @@ class InteractiveIlustracion extends StatelessWidget {
             final readyState = (state as CorteInteractivoReady);
             return LayoutBuilder(builder: (context, constraints) {
               final width = constraints.maxWidth;
+              final currentImage = readyState.imageForMode(imageMode);
+
+              if (currentImage == null) {
+                return const Center(
+                  child: Text('No se pudo cargar la imagen'),
+                );
+              }
+
               return Stack(
                 children: [
                   Image.memory(
-                    readyState.currentImage.bytes,
+                    currentImage.bytes,
                     fit: BoxFit.cover,
                     gaplessPlayback: false,
                     filterQuality: FilterQuality.high,
@@ -57,16 +69,16 @@ class InteractiveIlustracion extends StatelessWidget {
                           size: Size(
                             width,
                             width *
-                                (readyState.currentImage.image.height /
-                                    readyState.currentImage.image.width),
+                                (currentImage.image.height /
+                                    currentImage.image.width),
                           ),
                           painter: SegmentoPainter(
                             segmento: segmento.path,
                             isHighlighted:
                                 highlightedSegmentos.contains(segmento),
                             cerebroSize: Size(
-                              readyState.currentImage.image.width.toDouble(),
-                              readyState.currentImage.image.height.toDouble(),
+                              currentImage.image.width.toDouble(),
+                              currentImage.image.height.toDouble(),
                             ),
                             highlightColor: Colors.green.withOpacity(0.5),
                           ),
@@ -82,13 +94,13 @@ class InteractiveIlustracion extends StatelessWidget {
                           size: Size(
                             width,
                             width *
-                                (readyState.currentImage.image.height /
-                                    readyState.currentImage.image.width),
+                                (currentImage.image.height /
+                                    currentImage.image.width),
                           ),
                           painter: VistaPainter(
                             cerebroSize: Size(
-                              readyState.currentImage.image.width.toDouble(),
-                              readyState.currentImage.image.height.toDouble(),
+                              currentImage.image.width.toDouble(),
+                              currentImage.image.height.toDouble(),
                             ),
                             vista: vista.path,
                           ),
@@ -98,7 +110,7 @@ class InteractiveIlustracion extends StatelessWidget {
                         },
                       );
                     }),
-                  if (readyState.alternativeImages.isNotEmpty)
+                  if (readyState.images.length > 1)
                     Positioned(
                       top: 0,
                       right: 0,
@@ -107,7 +119,11 @@ class InteractiveIlustracion extends StatelessWidget {
                           Icons.visibility,
                         ),
                         onPressed: () {
-                          context.read<CorteInteractivoCubit>().toggleImage();
+                          onImageModeChange?.call(
+                            imageMode == ImageMode.real
+                                ? ImageMode.aquarela
+                                : ImageMode.real,
+                          );
                         },
                       ),
                     ),

@@ -9,8 +9,14 @@ import 'package:neuroanatomy/widgets/interactive_ilustracion.dart';
 class OtherCortesGrid extends StatelessWidget {
   final SegmentoCerebro currentSegmento;
   final List<CorteCerebro> allCortes;
-  const OtherCortesGrid(
-      {super.key, required this.currentSegmento, required this.allCortes});
+  final ImageMode imageMode;
+
+  const OtherCortesGrid({
+    super.key,
+    required this.currentSegmento,
+    required this.allCortes,
+    required this.imageMode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +50,7 @@ class OtherCortesGrid extends StatelessWidget {
                   key: ValueKey(corte.id),
                   corteCerebro: corte,
                   highlightedSegmentos: [segmento],
+                  imageMode: imageMode,
                 ),
               ),
             ),
