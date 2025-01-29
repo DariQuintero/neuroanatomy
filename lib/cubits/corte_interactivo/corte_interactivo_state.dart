@@ -12,16 +12,16 @@ class CorteInteractivoInitial extends CorteInteractivoState {}
 class CorteInteractivoLoading extends CorteInteractivoState {}
 
 class CorteInteractivoReady extends CorteInteractivoState {
-  final ui.Image image;
-  final Uint8List bytes;
+  final DisplayableImage currentImage;
+  final List<DisplayableImage> alternativeImages;
 
   const CorteInteractivoReady({
-    required this.image,
-    required this.bytes,
+    required this.currentImage,
+    this.alternativeImages = const [],
   });
 
   @override
-  List<Object> get props => [image, bytes];
+  List<Object> get props => [currentImage, alternativeImages];
 }
 
 class CorteInteractivoError extends CorteInteractivoState {

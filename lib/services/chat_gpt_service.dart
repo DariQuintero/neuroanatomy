@@ -1,23 +1,38 @@
-import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
+import 'dart:convert';
+
+import 'package:dart_openai/dart_openai.dart';
+import 'package:neuroanatomy/models/quiz.dart';
 
 class ChatGPTService {
-  late OpenAI _openAI;
+  static const quizSystem = OpenAIChatCompletionChoiceMessageModel(
+    content:
+        'When I send <<<text>>>, create a quiz with 2 questions. Each question has 4 short answers. Answer format: {"q":[{"q":"question","a":["correct","answer2","answer3","answer4"]}]}. Answer length <500 chars, avoid spaces/linebreaks.',
+    role: OpenAIChatMessageRole.system,
+  );
 
-  ChatGPTService() {
-    _openAI = OpenAI.instance.build(
-        token: const String.fromEnvironment('OPENAI_API_KEY'),
-        baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 15)),
-        isLog: true);
-  }
+  static const definitionSystem = OpenAIChatCompletionChoiceMessageModel(
+    content:
+        'When I send <<<text>>> you recognize terms and definitions. Answer format: {"d":[{"t":"term","d":"definition"}]}. answer_length<500 chars,avoid spaces/linebreaks.max 5 terms.',
+    role: OpenAIChatMessageRole.system,
+  );
 
-  Future<String> generateQuizFromText(String text) async {
-    await Future.delayed(const Duration(seconds: 1));
-    final prompt =
-        'I have this text: $text\n Generate a 5 question quiz from this text with open questions';
-    final request =
-        CompleteText(prompt: prompt, model: Model.TextDavinci3, maxTokens: 200);
-    final response = await _openAI.onCompletion(request: request);
-    if (response == null) return 'Error';
-    return response.choices.first.text;
+  static Future<Quiz> generateQuiz(String text) async {
+    final quizResponse = await OpenAI.instance.chat.create(
+      model: 'gpt-3.5-turbo',
+      messages: [
+        definitionSystem,
+        OpenAIChatCompletionChoiceMessageModel(
+          content: "<<<$text>>>",
+          role: OpenAIChatMessageRole.user,
+        )
+      ],
+      temperature: 0,
+    );
+
+    final quizStr = quizResponse.choices.last.message.content;
+
+    final quizJson = json.decode(quizStr);
+
+    return Quiz.fromJson(quizJson);
   }
 }

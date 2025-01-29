@@ -8,8 +8,8 @@ import 'package:neuroanatomy/services/notes_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NotesPage extends StatefulWidget {
-  final SegmentoCerebro estructura;
-  const NotesPage({super.key, required this.estructura});
+  final SegmentoCerebro segmento;
+  const NotesPage({super.key, required this.segmento});
 
   @override
   State<NotesPage> createState() => _NotesPageState();
@@ -17,42 +17,24 @@ class NotesPage extends StatefulWidget {
 
 class _NotesPageState extends State<NotesPage> {
   List<Note> currentNotes = [];
+  final List<Note> selectedNotesForActivity = [];
+  bool isSelecting = false;
 
   @override
   Widget build(BuildContext context) {
     final userId = (context.read<AuthCubit>().state as AuthSuccess).user.uid;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notas ${widget.estructura.nombre}'),
+        title: isSelecting
+            ? const Text('Selecciona las notas')
+            : Text('Notas ${widget.segmento.nombre}'),
         actions: [
           IconButton(
             onPressed: () async {
-              // show snackbar and hide it after future completes
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Generating Quiz...'),
-                ),
-              );
-              final response = await ChatGPTService().generateQuizFromText(
-                currentNotes.map((e) => e.content).join('\n'),
-              );
-              if (!mounted) return;
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              NotesService(userId: userId).createNote(
-                Note(
-                  content: response,
-                  title:
-                      'Quiz generado: ${DateTime.now().toString().split(' ')[0]}',
-                  structureId: widget.estructura.id,
-                ),
-              );
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Generated Quiz'),
-                  content: Text(response),
-                ),
-              );
+              selectedNotesForActivity.clear();
+              setState(() {
+                isSelecting = !isSelecting;
+              });
             },
             icon: const Icon(Icons.chat),
           ),
@@ -62,11 +44,10 @@ class _NotesPageState extends State<NotesPage> {
         onPressed: () {
           pushNoteFormPage(userId: userId);
         },
-        child: const Icon(Icons.add),
+        child: isSelecting ? const Icon(Icons.check) : const Icon(Icons.add),
       ),
       body: StreamBuilder<List<Note>>(
-        stream:
-            NotesService(userId: userId).getNotesStream(widget.estructura.id),
+        stream: NotesService(userId: userId).getNotesStream(widget.segmento.id),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             currentNotes = snapshot.data!;
@@ -79,22 +60,12 @@ class _NotesPageState extends State<NotesPage> {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 final notes = snapshot.data!;
-                return ListTile(
-                  title: Text(notes[index].title),
-                  subtitle: Text(notes[index].content.length > 50
-                      ? '${notes[index].content.substring(0, 50)}...'
-                      : notes[index].content),
-                  onTap: () {
-                    pushNoteFormPage(
-                      userId: userId,
-                      existingNote: notes[index],
-                    );
-                  },
-                  onLongPress: () {
-                    NotesService(userId: userId).deleteNoteById(
-                        notes[index].structureId, notes[index].id!);
-                  },
-                );
+                final note = notes[index];
+                if (isSelecting) {
+                  return _buildCheckboxListTile(userId, note);
+                } else {
+                  return _buildListTile(userId, note);
+                }
               },
             );
           } else {
@@ -107,11 +78,67 @@ class _NotesPageState extends State<NotesPage> {
     );
   }
 
+  Widget _buildListTile(String userId, Note note) {
+    return ListTile(
+      title: Text(note.title),
+      subtitle: Text(
+        note.content,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+      onTap: () {
+        pushNoteFormPage(
+          userId: userId,
+          existingNote: note,
+        );
+      },
+      onLongPress: () {
+        NotesService(userId: userId).deleteNoteById(note.structureId, note.id!);
+      },
+    );
+  }
+
+  Widget _buildCheckboxListTile(String userId, Note note) {
+    return CheckboxListTile(
+      title: Text(note.title),
+      subtitle: Text(
+        note.content,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+      value: selectedNotesForActivity.contains(note),
+      controlAffinity: ListTileControlAffinity.leading,
+      onChanged: (value) {
+        setState(
+          () {
+            // hide current snackbar
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            if (value == true) {
+              if (selectedNotesForActivity.length >= 5) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Solo puedes seleccionar hasta 5 notas por actividad',
+                    ),
+                  ),
+                );
+                return;
+              }
+              selectedNotesForActivity.add(note);
+            } else {
+              selectedNotesForActivity.remove(note);
+            }
+          },
+        );
+      },
+    );
+  }
+
   void pushNoteFormPage({required String userId, Note? existingNote}) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => NoteFormPage(
-          structureId: widget.estructura.id,
+          structureId: widget.segmento.id,
           onCreateNote: (note) {
             if (existingNote != null) {
               NotesService(userId: userId)

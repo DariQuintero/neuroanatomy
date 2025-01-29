@@ -41,7 +41,6 @@ dependencies:
   equatable: ^2.0.5
   flutter_bloc: ^8.1.2
   cloud_firestore: ^4.5.0
-  chat_gpt_sdk: ^2.0.8
   flutter_svg: ^2.0.4
   sliding_up_panel: ^2.0.0+1
   marquee: ^2.2.3
@@ -51,6 +50,8 @@ dependencies:
   flutter_expandable_fab: ^1.8.1
   image: ^4.0.17
   path_provider: ^2.0.15
+  envied: ^0.3.0+3
+  dart_openai: ^3.0.0
 
 dev_dependencies:
   flutter_test:

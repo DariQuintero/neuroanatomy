@@ -27,7 +27,7 @@ class InteractiveIlustracion extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<CorteInteractivoCubit>(
         create: (context) =>
-            CorteInteractivoCubit(corte: corteCerebro)..getImage(),
+            CorteInteractivoCubit(corte: corteCerebro)..getImages(),
         child: BlocBuilder<CorteInteractivoCubit, CorteInteractivoState>(
           builder: (context, state) {
             if (state is CorteInteractivoLoading ||
@@ -46,9 +46,9 @@ class InteractiveIlustracion extends StatelessWidget {
               return Stack(
                 children: [
                   Image.memory(
-                    readyState.bytes,
+                    readyState.currentImage.bytes,
                     fit: BoxFit.cover,
-                    gaplessPlayback: true,
+                    gaplessPlayback: false,
                     filterQuality: FilterQuality.high,
                   ),
                   ...corteCerebro.segmentos.map((segmento) {
@@ -57,16 +57,16 @@ class InteractiveIlustracion extends StatelessWidget {
                           size: Size(
                             width,
                             width *
-                                (readyState.image.height /
-                                    readyState.image.width),
+                                (readyState.currentImage.image.height /
+                                    readyState.currentImage.image.width),
                           ),
                           painter: SegmentoPainter(
                             segmento: segmento.path,
                             isHighlighted:
                                 highlightedSegmentos.contains(segmento),
                             cerebroSize: Size(
-                              readyState.image.width.toDouble(),
-                              readyState.image.height.toDouble(),
+                              readyState.currentImage.image.width.toDouble(),
+                              readyState.currentImage.image.height.toDouble(),
                             ),
                             highlightColor: Colors.green.withOpacity(0.5),
                           ),
@@ -82,13 +82,13 @@ class InteractiveIlustracion extends StatelessWidget {
                           size: Size(
                             width,
                             width *
-                                (readyState.image.height /
-                                    readyState.image.width),
+                                (readyState.currentImage.image.height /
+                                    readyState.currentImage.image.width),
                           ),
                           painter: VistaPainter(
                             cerebroSize: Size(
-                              readyState.image.width.toDouble(),
-                              readyState.image.height.toDouble(),
+                              readyState.currentImage.image.width.toDouble(),
+                              readyState.currentImage.image.height.toDouble(),
                             ),
                             vista: vista.path,
                           ),
@@ -98,6 +98,19 @@ class InteractiveIlustracion extends StatelessWidget {
                         },
                       );
                     }),
+                  if (readyState.alternativeImages.isNotEmpty)
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.visibility,
+                        ),
+                        onPressed: () {
+                          context.read<CorteInteractivoCubit>().toggleImage();
+                        },
+                      ),
+                    ),
                 ],
               );
             });

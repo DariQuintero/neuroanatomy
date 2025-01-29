@@ -17,6 +17,9 @@ class CorteCerebro extends Equatable {
   final String realImage;
 
   @JsonKey()
+  final String? aquarelaImage;
+
+  @JsonKey()
   final List<SegmentoCerebro> segmentos;
 
   @JsonKey(defaultValue: [])
@@ -34,6 +37,7 @@ class CorteCerebro extends Equatable {
     required this.segmentos,
     required this.realImage,
     required this.vistas,
+    this.aquarelaImage,
     this.derechaId,
     this.izquierdaId,
   });
@@ -52,5 +56,6 @@ class CorteCerebro extends Equatable {
         realImage,
         derechaId,
         izquierdaId,
+        aquarelaImage,
       ];
 }

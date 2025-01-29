@@ -3,6 +3,7 @@ import 'package:neuroanatomy/extensions/context_extension.dart';
 import 'package:neuroanatomy/models/corte_cerebro.dart';
 import 'package:neuroanatomy/models/segmento_cerebro.dart';
 import 'package:neuroanatomy/pages/home_page/widgets/other_cortes_grid.dart';
+import 'package:neuroanatomy/pages/notes_page/notes_page.dart';
 import 'package:neuroanatomy/widgets/drag_indicator.dart';
 
 class EstructuraDetailsPanel extends StatelessWidget {
@@ -39,7 +40,13 @@ class EstructuraDetailsPanel extends StatelessWidget {
             Row(
               children: [
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) {
+                        return NotesPage(segmento: segmento);
+                      }),
+                    );
+                  },
                   icon: const Icon(
                     Icons.description,
                     color: Colors.white,

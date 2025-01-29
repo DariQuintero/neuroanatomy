@@ -17,6 +17,7 @@ CorteCerebro _$CorteCerebroFromJson(Map<String, dynamic> json) => CorteCerebro(
               ?.map((e) => VistaCerebro.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
+      aquarelaImage: json['aquarelaImage'] as String?,
       derechaId: json['derechaId'] as String?,
       izquierdaId: json['izquierdaId'] as String?,
     );
@@ -26,6 +27,7 @@ Map<String, dynamic> _$CorteCerebroToJson(CorteCerebro instance) =>
       'id': instance.id,
       'nombre': instance.nombre,
       'realImage': instance.realImage,
+      'aquarelaImage': instance.aquarelaImage,
       'segmentos': instance.segmentos,
       'vistas': instance.vistas,
       'derechaId': instance.derechaId,
