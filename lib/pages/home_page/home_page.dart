@@ -432,9 +432,9 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildIzquierdaButton(context),
-            Expanded(child: _buildInteractiveIlustration(cortesState, context)),
             _buildDerechaButton(context),
           ],
         ),

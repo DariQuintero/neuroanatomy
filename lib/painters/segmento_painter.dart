@@ -26,7 +26,7 @@ class SegmentoPainter extends CustomPainter {
     ).storage);
 
     final paint = Paint()
-      ..color = highlightColor
+      ..color = isHighlighted ? highlightColor : Colors.transparent
       ..style = PaintingStyle.fill
       ..strokeWidth = 2;
 
