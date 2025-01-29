@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:neuroanatomy/cubits/auth_cubit/auth_cubit.dart';
 import 'package:neuroanatomy/models/note.dart';
+import 'package:neuroanatomy/models/segmento_cerebro.dart';
 import 'package:neuroanatomy/pages/note_form_page/note_form_page.dart';
 import 'package:neuroanatomy/services/chat_gpt_service.dart';
 import 'package:neuroanatomy/services/notes_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NotesPage extends StatefulWidget {
-  final String structureId;
-  const NotesPage({super.key, required this.structureId});
+  final EstructuraCerebro estructura;
+  const NotesPage({super.key, required this.estructura});
 
   @override
   State<NotesPage> createState() => _NotesPageState();
@@ -22,22 +23,37 @@ class _NotesPageState extends State<NotesPage> {
     final userId = (context.read<AuthCubit>().state as AuthSuccess).user.uid;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notas del sistema limbico'),
+        title: Text('Notas ${widget.estructura.nombre}'),
         actions: [
           IconButton(
             onPressed: () async {
+              // show snackbar and hide it after future completes
+              print("HOLA");
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Generating Quiz...'),
+                ),
+              );
               final response = await ChatGPTService().generateQuizFromText(
                 currentNotes.map((e) => e.content).join('\n'),
               );
-              if (mounted) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Generated Quiz'),
-                    content: Text(response),
-                  ),
-                );
-              }
+              if (!mounted) return;
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              NotesService(userId: userId).createNote(
+                Note(
+                  content: response,
+                  title:
+                      'Quiz generado: ${DateTime.now().toString().split(' ')[0]}',
+                  structureId: widget.estructura.id,
+                ),
+              );
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Generated Quiz'),
+                  content: Text(response),
+                ),
+              );
             },
             icon: const Icon(Icons.chat),
           ),
@@ -50,10 +66,16 @@ class _NotesPageState extends State<NotesPage> {
         child: const Icon(Icons.add),
       ),
       body: StreamBuilder<List<Note>>(
-        stream: NotesService(userId: userId).getNotesStream(widget.structureId),
+        stream:
+            NotesService(userId: userId).getNotesStream(widget.estructura.id),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             currentNotes = snapshot.data!;
+            if (currentNotes.isEmpty) {
+              return const Center(
+                child: Text('No hay notas, agrega una usando el botón +'),
+              );
+            }
             return ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
@@ -90,7 +112,7 @@ class _NotesPageState extends State<NotesPage> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => NoteFormPage(
-          structureId: widget.structureId,
+          structureId: widget.estructura.id,
           onCreateNote: (note) {
             if (existingNote != null) {
               NotesService(userId: userId)

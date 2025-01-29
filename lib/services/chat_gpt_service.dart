@@ -11,6 +11,7 @@ class ChatGPTService {
   }
 
   Future<String> generateQuizFromText(String text) async {
+    await Future.delayed(const Duration(seconds: 1));
     final prompt =
         'I have this text: $text\n Generate a 5 question quiz from this text with open questions';
     final request =

@@ -177,7 +177,7 @@ class GiroTemporalSuperior extends CustomPainter {
       canvas.drawPath(
         contorno,
         Paint()
-          ..color = Colors.greenAccent.shade400
+          ..color = Colors.black.withOpacity(0.5)
           ..style = PaintingStyle.fill,
       );
     }

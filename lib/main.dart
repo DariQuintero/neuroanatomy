@@ -35,7 +35,15 @@ class NeuroAnatomy extends StatelessWidget {
           child: BlocBuilder<AuthCubit, FirebaseAuthState>(
               builder: (context, state) {
             if (state is AuthSuccess) {
-              return const HomePage();
+              return Navigator(
+                onGenerateInitialRoutes: (navigator, initialRoute) {
+                  return [
+                    MaterialPageRoute(
+                      builder: (context) => const HomePage(),
+                    ),
+                  ];
+                },
+              );
             } else if (state is AuthFailure ||
                 state is AuthInitial ||
                 state is AuthLoading) {

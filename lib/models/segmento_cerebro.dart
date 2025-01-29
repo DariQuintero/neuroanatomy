@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
-class SegmentoCerebro {
+class EstructuraCerebro {
+  final String id;
   final String nombre;
   final CustomPainter painter;
 
-  SegmentoCerebro({
+  EstructuraCerebro({
+    required this.id,
     required this.nombre,
     required this.painter,
   });
