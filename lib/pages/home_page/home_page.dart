@@ -40,7 +40,10 @@ class _HomePageState extends State<HomePage> {
       create: (context) => CortesCubit(CortesService())..getCortes(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('NeuroAnatomy'),
+          title: const Image(
+            image: AssetImage('assets/logo.png'),
+            height: 40,
+          ),
           actions: [
             IconButton(
               onPressed: () {
