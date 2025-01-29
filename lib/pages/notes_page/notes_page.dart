@@ -3,6 +3,7 @@ import 'package:neuroanatomy/cubits/auth_cubit/auth_cubit.dart';
 import 'package:neuroanatomy/models/note.dart';
 import 'package:neuroanatomy/models/segmento_cerebro.dart';
 import 'package:neuroanatomy/pages/note_form_page/note_form_page.dart';
+import 'package:neuroanatomy/pages/quiz_page/quiz_page.dart';
 import 'package:neuroanatomy/services/notes_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -41,7 +42,24 @@ class _NotesPageState extends State<NotesPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          pushNoteFormPage(userId: userId);
+          if (isSelecting) {
+            if (selectedNotesForActivity.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Selecciona al menos una nota'),
+                ),
+              );
+              return;
+            }
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    QuizaPage(notes: selectedNotesForActivity),
+              ),
+            );
+          } else {
+            pushNoteFormPage(userId: userId);
+          }
         },
         child: isSelecting ? const Icon(Icons.check) : const Icon(Icons.add),
       ),

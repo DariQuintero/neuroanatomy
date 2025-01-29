@@ -19,4 +19,12 @@ class Quiz extends Equatable {
 
   @override
   List<Object?> get props => [questions];
+
+  Quiz copyWith({
+    List<QuizQuestion>? questions,
+  }) {
+    return Quiz(
+      questions: questions ?? this.questions,
+    );
+  }
 }
