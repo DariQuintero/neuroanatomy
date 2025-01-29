@@ -42,6 +42,7 @@ dependencies:
   flutter_bloc: ^8.1.2
   cloud_firestore: ^4.5.0
   chat_gpt_sdk: ^2.0.8
+  flutter_svg: ^2.0.4
 
 
 dev_dependencies:
@@ -70,9 +71,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/cerebro1/lateral_izquierdo/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
