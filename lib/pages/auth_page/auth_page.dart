@@ -9,12 +9,20 @@ class AuthPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Auth Page'),
-      ),
       body: BlocBuilder<AuthCubit, FirebaseAuthState>(
         builder: (context, state) {
-          return AuthForm(state: state);
+          return Column(
+            children: [
+              const Spacer(flex: 2),
+              Image.asset(
+                'assets/logo_with_text.png',
+                height: 160,
+              ),
+              const Spacer(flex: 1),
+              AuthForm(state: state),
+              const Spacer(flex: 3),
+            ],
+          );
         },
       ),
     );
