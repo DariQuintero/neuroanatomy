@@ -34,8 +34,6 @@ class ChatGPTService {
       throw Exception('Quiz not generated');
     }
 
-    print(quizStr);
-
     final quizJson = json.decode(quizStr);
     // set 'rightAnswer' to each question
     quizJson['q'].forEach((question) {

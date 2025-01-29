@@ -46,14 +46,4 @@ class QuizQuestion extends Equatable {
       rightAnswer: rightAnswer,
     );
   }
-
-  static String _rightAnswerFromJson(Map<String, dynamic> json) {
-    return json['a'][0];
-  }
-
-  static Map<String, dynamic> _rightAnswerToJson(String rightAnswer) {
-    return {
-      'a': [rightAnswer],
-    };
-  }
 }

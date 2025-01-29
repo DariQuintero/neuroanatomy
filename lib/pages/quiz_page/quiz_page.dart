@@ -23,8 +23,6 @@ class QuizaPage extends StatelessWidget {
 }
 
 class _QuizPageDisplay extends StatefulWidget {
-  _QuizPageDisplay();
-
   @override
   State<_QuizPageDisplay> createState() => _QuizPageDisplayState();
 }

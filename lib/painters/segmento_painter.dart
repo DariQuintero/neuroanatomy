@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:neuroanatomy/models/segmento_cerebro.dart';
 
 class SegmentoPainter extends CustomPainter {
-  final Path segmento;
+  final SegmentoCerebro segmento;
   final bool isHighlighted;
   final Size cerebroSize;
   final Color highlightColor;
 
-  Path scaledPath = Path();
+  List<Path> scaledPaths = [];
 
   SegmentoPainter({
     required this.segmento,
@@ -18,19 +19,26 @@ class SegmentoPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final relation = size.width / cerebroSize.width;
-    scaledPath = segmento;
-    scaledPath = segmento.transform(Matrix4.diagonal3Values(
-      relation,
-      relation,
-      1,
-    ).storage);
+
+    // canvas.drawPath(scaledPath, paint);
+    for (var segmento in segmento.path) {
+      scaledPaths.add(segmento.transform(Matrix4.diagonal3Values(
+        relation,
+        relation,
+        1,
+      ).storage)
+        ..close());
+    }
 
     final paint = Paint()
       ..color = isHighlighted ? highlightColor : Colors.transparent
+      // ..color = highlightColor
       ..style = PaintingStyle.fill
       ..strokeWidth = 2;
 
-    canvas.drawPath(scaledPath, paint);
+    for (var path in scaledPaths) {
+      canvas.drawPath(path, paint);
+    }
   }
 
   @override
@@ -40,6 +48,11 @@ class SegmentoPainter extends CustomPainter {
 
   @override
   bool hitTest(Offset position) {
-    return scaledPath.contains(position);
+    for (var path in scaledPaths) {
+      if (path.contains(position)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

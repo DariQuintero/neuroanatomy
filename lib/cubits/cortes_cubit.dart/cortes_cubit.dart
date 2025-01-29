@@ -19,6 +19,7 @@ class CortesCubit extends Cubit<CortesState> {
       emit(CortesReady(cortes: cortes, selectedCorte: cortes.first));
     } catch (e) {
       emit(CortesError(message: e.toString()));
+      rethrow;
     }
   }
 

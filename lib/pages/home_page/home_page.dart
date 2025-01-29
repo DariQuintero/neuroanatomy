@@ -422,7 +422,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildNavigationButtons(
       CortesReady cortesState, BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           children: [

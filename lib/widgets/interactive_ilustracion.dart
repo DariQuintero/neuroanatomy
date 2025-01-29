@@ -15,6 +15,7 @@ class InteractiveIlustracion extends StatelessWidget {
   final List<SegmentoCerebro> highlightedSegmentos;
   final ImageMode imageMode;
   final Function(ImageMode)? onImageModeChange;
+  final bool showSwitchImageMode;
 
   const InteractiveIlustracion({
     super.key,
@@ -25,6 +26,7 @@ class InteractiveIlustracion extends StatelessWidget {
     this.showVistas = false,
     this.imageMode = ImageMode.real,
     this.onImageModeChange,
+    this.showSwitchImageMode = true,
   });
 
   @override
@@ -73,7 +75,7 @@ class InteractiveIlustracion extends StatelessWidget {
                                     currentImage.image.width),
                           ),
                           painter: SegmentoPainter(
-                            segmento: segmento.path,
+                            segmento: segmento,
                             isHighlighted:
                                 highlightedSegmentos.contains(segmento),
                             cerebroSize: Size(
@@ -110,7 +112,7 @@ class InteractiveIlustracion extends StatelessWidget {
                         },
                       );
                     }),
-                  if (readyState.images.length > 1)
+                  if (showSwitchImageMode && readyState.images.length > 1)
                     Positioned(
                       top: 0,
                       right: 0,

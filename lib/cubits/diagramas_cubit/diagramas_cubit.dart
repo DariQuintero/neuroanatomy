@@ -20,7 +20,6 @@ class DiagramasCubit extends Cubit<DiagramasState> {
       final diagramas = await _diagramasService.getDiagramas(type);
       emit(DiagramasLoaded(diagramas: diagramas));
     } catch (e) {
-      print(e);
       emit(DiagramasError(message: e.toString()));
     }
   }

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:neuroanatomy/json_converters/path_converter.dart';
+import 'package:neuroanatomy/json_converters/path_list_converter.dart';
 
 import 'package:json_annotation/json_annotation.dart';
 
@@ -14,8 +14,11 @@ class SegmentoCerebro extends Equatable {
   @JsonKey()
   final String nombre;
 
-  @SvgPathConverter()
-  final Path path;
+  // @SvgPathConverter()
+  // final Path path;
+
+  @SvgPathListConverter()
+  final List<Path> path;
 
   const SegmentoCerebro({
     required this.id,
