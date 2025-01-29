@@ -49,6 +49,7 @@ dependencies:
   collection: ^1.17.1
   svg_path_parser: ^1.1.1
   flutter_expandable_fab: ^1.8.1
+  image: ^4.0.17
 
 dev_dependencies:
   flutter_test:

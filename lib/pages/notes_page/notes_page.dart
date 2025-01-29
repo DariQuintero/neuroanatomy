@@ -8,7 +8,7 @@ import 'package:neuroanatomy/services/notes_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NotesPage extends StatefulWidget {
-  final EstructuraCerebro estructura;
+  final SegmentoCerebro estructura;
   const NotesPage({super.key, required this.estructura});
 
   @override

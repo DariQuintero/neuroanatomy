@@ -5,7 +5,7 @@ class IlustracionCerebro {
   final String id;
   final String nombre;
   final String realPath;
-  final List<EstructuraCerebro> estructuras;
+  final List<SegmentoCerebro> estructuras;
   final List<CorteCerebro> cortes;
 
   IlustracionCerebro({

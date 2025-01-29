@@ -1,13 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:neuroanatomy/json_converters/path_converter.dart';
 
-class EstructuraCerebro {
+import 'package:json_annotation/json_annotation.dart';
+
+part 'segmento_cerebro.g.dart';
+
+@JsonSerializable()
+class SegmentoCerebro {
+  @JsonKey()
   final String id;
-  final String nombre;
-  final CustomPainter painter;
 
-  EstructuraCerebro({
+  @JsonKey()
+  final String nombre;
+
+  @SvgPathConverter()
+  final Path path;
+
+  SegmentoCerebro({
     required this.id,
     required this.nombre,
-    required this.painter,
+    required this.path,
   });
+
+  factory SegmentoCerebro.fromJson(Map<String, dynamic> json) =>
+      _$SegmentoCerebroFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SegmentoCerebroToJson(this);
 }

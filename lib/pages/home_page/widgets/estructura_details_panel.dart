@@ -5,9 +5,9 @@ import 'package:neuroanatomy/widgets/drag_indicator.dart';
 
 class EstructuraDetailsPanel extends StatelessWidget {
   final ScrollController scrollController;
-  final EstructuraCerebro estructura;
+  final SegmentoCerebro segmento;
   const EstructuraDetailsPanel(
-      {super.key, required this.scrollController, required this.estructura});
+      {super.key, required this.scrollController, required this.segmento});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class EstructuraDetailsPanel extends StatelessWidget {
             ),
             const SizedBox(height: 14.0),
             Text(
-              estructura.nombre,
+              segmento.nombre,
               style: context.theme.textTheme.headlineSmall,
             ),
             const SizedBox(height: 8.0),
