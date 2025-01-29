@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "381846882105",
+    "project_id": "neuroanotomy",
+    "storage_bucket": "neuroanotomy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381846882105:android:29b58251c6d063af394ae8",
+        "android_client_info": {
+          "package_name": "com.example.neuroanatomy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "381846882105-cl0l9msgjgpttv2dvcvd8ibg2vjgpn0i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCu4WH9k10InCFCqQd9RcdkhGfj5Z5tKg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "381846882105-cl0l9msgjgpttv2dvcvd8ibg2vjgpn0i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "381846882105-569jvt80d25kt03u1d37h240c96jj255.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.neuroanatomy"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
