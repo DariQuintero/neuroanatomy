@@ -98,8 +98,6 @@ class _HomePageState extends State<HomePage> {
               );
             }
 
-            print('image mode: ${state.imageMode}');
-
             return Stack(
               children: [
                 _buildBody(context, state),
@@ -113,6 +111,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildFab(BuildContext context) {
+    final state = context.read<CortesCubit>().state;
+    if (state is! CortesReady) {
+      return const SizedBox.shrink();
+    }
     return Positioned(
       right: 20.0,
       bottom: _fabPadding,
@@ -123,13 +125,17 @@ class _HomePageState extends State<HomePage> {
           onPressed: () {
             context.read<CortesCubit>().toggleShowingVistas();
           },
-          backgroundColor: context.theme.colorScheme.primary,
+          backgroundColor: state.isShowingVistas
+              ? Colors.white
+              : context.theme.colorScheme.primary,
           child: SizedBox(
             width: 24,
             child: SvgPicture.asset(
               'assets/icons/surgical.svg',
-              colorFilter: const ColorFilter.mode(
-                Colors.white,
+              colorFilter: ColorFilter.mode(
+                state.isShowingVistas
+                    ? context.theme.colorScheme.primary
+                    : Colors.white,
                 BlendMode.srcIn,
               ),
             ),
@@ -158,25 +164,10 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Padding(
         padding: EdgeInsets.only(bottom: context.mediaQuery.size.height * 0.2),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: [
-            Row(
-              children: [
-                Expanded(child: _buildAtrasButton(context)),
-                Expanded(child: _buildArribaButton(context)),
-                const Spacer(),
-              ],
-            ),
-            Row(
-              children: [
-                _buildIzquierdaButton(context),
-                Expanded(
-                    child: _buildInteractiveIlustration(cortesState, context)),
-                _buildDerechaButton(context),
-              ],
-            ),
-            _buildAbajoButton(context),
+            _buildNavigationButtons(cortesState, context),
+            _buildInteractiveIlustration(cortesState, context),
           ],
         ),
       ),
@@ -394,29 +385,61 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  InteractiveIlustracion _buildInteractiveIlustration(
+  Widget _buildInteractiveIlustration(
       CortesReady cortesState, BuildContext context) {
-    return InteractiveIlustracion(
-      key: ValueKey(cortesState.selectedCorte.id),
-      corteCerebro: cortesState.selectedCorte,
-      showVistas: cortesState.isShowingVistas,
-      onEstructuraTap: (segmento) {
-        if (segmento.id == cortesState.selectedSegmento?.id) {
-          context.read<CortesCubit>().selectSegmento(null);
-          return;
-        }
-        context.read<CortesCubit>().selectSegmento(segmento);
-      },
-      onVistaTap: (vista) {
-        context.read<CortesCubit>().selectCorteById(vista.toCorteId);
-      },
-      highlightedSegmentos: cortesState.selectedSegmento != null
-          ? [cortesState.selectedSegmento!]
-          : [],
-      imageMode: cortesState.imageMode,
-      onImageModeChange: (mode) {
-        context.read<CortesCubit>().changeImageMode(mode);
-      },
+    final width = context.mediaQuery.size.width;
+
+    final viewWidth = width > 840 ? width * 0.40 : width * 0.8;
+    return Center(
+      child: SizedBox(
+        width: viewWidth,
+        child: InteractiveIlustracion(
+          key: ValueKey(cortesState.selectedCorte.id),
+          corteCerebro: cortesState.selectedCorte,
+          showVistas: cortesState.isShowingVistas,
+          onEstructuraTap: (segmento) {
+            if (segmento.id == cortesState.selectedSegmento?.id) {
+              context.read<CortesCubit>().selectSegmento(null);
+              return;
+            }
+            context.read<CortesCubit>().selectSegmento(segmento);
+          },
+          onVistaTap: (vista) {
+            context.read<CortesCubit>().selectCorteById(vista.toCorteId);
+          },
+          highlightedSegmentos: cortesState.selectedSegmento != null
+              ? [cortesState.selectedSegmento!]
+              : [],
+          imageMode: cortesState.imageMode,
+          onImageModeChange: (mode) {
+            context.read<CortesCubit>().changeImageMode(mode);
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavigationButtons(
+      CortesReady cortesState, BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(
+          children: [
+            Expanded(child: _buildAtrasButton(context)),
+            Expanded(child: _buildArribaButton(context)),
+            const Spacer(),
+          ],
+        ),
+        Row(
+          children: [
+            _buildIzquierdaButton(context),
+            Expanded(child: _buildInteractiveIlustration(cortesState, context)),
+            _buildDerechaButton(context),
+          ],
+        ),
+        _buildAbajoButton(context),
+      ],
     );
   }
 

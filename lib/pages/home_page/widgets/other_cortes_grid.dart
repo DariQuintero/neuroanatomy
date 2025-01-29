@@ -28,7 +28,8 @@ class OtherCortesGrid extends StatelessWidget {
         final segmento = corte.segmentos.firstWhere(
             (element) => element.id == currentSegmento.id,
             orElse: () => currentSegmento);
-        final size = context.mediaQuery.size.width * 0.4;
+        const size = 182.0;
+
         return Container(
           margin: const EdgeInsets.all(8.0),
           decoration: BoxDecoration(
