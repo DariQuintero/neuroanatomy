@@ -1,5 +1,5 @@
-// lib/env/env.dart
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 abstract class Env {
-  static const String openAIAPIKey =
-      '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';
+  static String get openAIAPIKey => dotenv.env['OPEN_AI_API_KEY'] ?? '';
 }

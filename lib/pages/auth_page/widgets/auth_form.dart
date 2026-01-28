@@ -3,7 +3,7 @@ import 'package:neuroanatomy/cubits/auth_cubit/auth_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neuroanatomy/extensions/context_extension.dart';
 import 'package:neuroanatomy/theme.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:neuroanatomy/widgets/loading_button.dart';
 
 class AuthForm extends StatefulWidget {
   final FirebaseAuthState state;
@@ -15,12 +15,11 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   bool isLogin = true;
+  bool isLoading = false;
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-
-  final roundedLoadingButtonController = RoundedLoadingButtonController();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -54,27 +53,34 @@ class _AuthFormState extends State<AuthForm> {
             ),
           ],
           const SizedBox(height: 12),
-          RoundedLoadingButton(
-            controller: roundedLoadingButtonController,
-            loaderSize: 12,
+          LoadingButton(
             width: context.mediaQuery.size.width,
             color: context.theme.primaryColor,
+            isLoading: isLoading,
             onPressed: () async {
-              if (isLogin) {
-                roundedLoadingButtonController.start();
-                await context.read<AuthCubit>().login(
-                      emailController.text,
-                      passwordController.text,
-                    );
-                roundedLoadingButtonController.stop();
-              } else {
-                if (confirmPasswordController.text == passwordController.text) {
-                  roundedLoadingButtonController.start();
-                  await context.read<AuthCubit>().signUp(
+              setState(() {
+                isLoading = true;
+              });
+              try {
+                if (isLogin) {
+                  await context.read<AuthCubit>().login(
                         emailController.text,
                         passwordController.text,
                       );
-                  roundedLoadingButtonController.stop();
+                } else {
+                  if (confirmPasswordController.text ==
+                      passwordController.text) {
+                    await context.read<AuthCubit>().signUp(
+                          emailController.text,
+                          passwordController.text,
+                        );
+                  }
+                }
+              } finally {
+                if (mounted) {
+                  setState(() {
+                    isLoading = false;
+                  });
                 }
               }
             },

@@ -82,13 +82,13 @@ class InteractiveIlustracion extends StatelessWidget {
                               currentImage.image.width.toDouble(),
                               currentImage.image.height.toDouble(),
                             ),
-                            highlightColor: Colors.green.withOpacity(0.5),
+                            highlightColor: Colors.green.withValues(alpha: 0.5),
                           ),
                         ),
                         onTap: () {
                           onEstructuraTap?.call(segmento);
                         });
-                  }).toList(),
+                  }),
                   if (showVistas)
                     ...corteCerebro.vistas.map((vista) {
                       return GestureDetector(

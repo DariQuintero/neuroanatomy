@@ -2,6 +2,7 @@ import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:neuroanatomy/cubits/auth_cubit/auth_cubit.dart';
 import 'package:neuroanatomy/env/env.dart';
 import 'package:neuroanatomy/pages/auth_page/auth_page.dart';
@@ -11,8 +12,9 @@ import 'package:neuroanatomy/theme.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  OpenAI.apiKey = Env.openAIAPIKey;
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
+  OpenAI.apiKey = Env.openAIAPIKey;
   await Firebase.initializeApp(
     name: 'NeuroAnatomy',
     options: DefaultFirebaseOptions.currentPlatform,
@@ -21,7 +23,7 @@ void main() async {
 }
 
 class NeuroAnatomy extends StatelessWidget {
-  const NeuroAnatomy({Key? key}) : super(key: key);
+  const NeuroAnatomy({super.key});
 
   @override
   Widget build(BuildContext context) {

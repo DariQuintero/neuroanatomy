@@ -5,42 +5,57 @@ import 'package:neuroanatomy/models/quiz.dart';
 
 class ChatGPTService {
   static Future<Quiz> generateQuiz(String text) async {
-    final quizSystem = OpenAIChatCompletionChoiceMessageModel(
-      content: [
-        OpenAIChatCompletionChoiceMessageContentItemModel.text(
-            'When I send <<<text>>>, create a small quiz. Each question has 4 short answers. Answer json format: {"q":[{"q":"question","a":["correct","answer2","answer3","answer4"]}]}. Answer length <500 chars, avoid spaces/linebreaks.')
-      ],
-      role: OpenAIChatMessageRole.system,
-    );
+    try {
+      final quizResponse = await OpenAI.instance.chat.create(
+        model: 'gpt-3.5-turbo',
+        responseFormat: {"type": "json_object"},
+        messages: [
+          OpenAIChatCompletionChoiceMessageModel(
+            content: [
+              OpenAIChatCompletionChoiceMessageContentItemModel.text(
+                'When I send text, create a small quiz. Each question has 4 short answers. '
+                'Answer in JSON format: {"q":[{"q":"question","a":["correct","answer2","answer3","answer4"]}]}. '
+                'Answer length <500 chars, avoid spaces/linebreaks.',
+              )
+            ],
+            role: OpenAIChatMessageRole.system,
+          ),
+          OpenAIChatCompletionChoiceMessageModel(
+            content: [
+              OpenAIChatCompletionChoiceMessageContentItemModel.text(text)
+            ],
+            role: OpenAIChatMessageRole.user,
+          )
+        ],
+        temperature: 0.3,
+        maxTokens: 1000,
+      );
 
-    final quizResponse = await OpenAI.instance.chat.create(
-      model: 'gpt-3.5-turbo-1106',
-      responseFormat: {"type": "json_object"},
-      messages: [
-        quizSystem,
-        OpenAIChatCompletionChoiceMessageModel(
-          content: [
-            OpenAIChatCompletionChoiceMessageContentItemModel.text(text)
-          ],
-          role: OpenAIChatMessageRole.user,
-        )
-      ],
-      temperature: 0,
-    );
+      final quizStr = quizResponse.choices.first.message.content?.first.text;
 
-    final quizStr = quizResponse.choices.last.message.content?.first.text;
+      if (quizStr == null || quizStr.isEmpty) {
+        throw Exception('Quiz not generated: empty response');
+      }
 
-    if (quizStr == null) {
-      throw Exception('Quiz not generated');
+      final quizJson = json.decode(quizStr);
+
+      // Validate response format
+      if (quizJson['q'] == null) {
+        throw Exception('Invalid quiz format: missing "q" field');
+      }
+
+      // set 'rightAnswer' to each question
+      for (var question in quizJson['q']) {
+        if (question['a'] == null || (question['a'] as List).isEmpty) {
+          throw Exception('Invalid question format: missing answers');
+        }
+        question['rightAnswer'] = question['a'][0];
+        question['a'].shuffle();
+      }
+
+      return Quiz.fromJson(quizJson);
+    } catch (e) {
+      throw Exception('Error generating quiz: $e');
     }
-
-    final quizJson = json.decode(quizStr);
-    // set 'rightAnswer' to each question
-    quizJson['q'].forEach((question) {
-      question['rightAnswer'] = question['a'][0];
-      question['a'].shuffle();
-    });
-
-    return Quiz.fromJson(quizJson);
   }
 }
