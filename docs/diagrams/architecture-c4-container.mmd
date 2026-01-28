@@ -1,0 +1,35 @@
+graph TB
+    User["👤 Usuario"]
+
+    subgraph FlutterApp["App Flutter (Dart/Flutter)"]
+        UI["Interfaz de Usuario<br/>(Pages & Widgets)"]
+        BLoC["Gestión de Estado<br/>(Cubits/BLoC)"]
+        Services["Servicios<br/>(Business Logic)"]
+    end
+
+    subgraph FirebaseServices["Firebase (Google Cloud)"]
+        Auth["Firebase Auth<br/>(Autenticación)"]
+        Firestore["Cloud Firestore<br/>(Base de Datos NoSQL)"]
+        Storage["Cloud Storage<br/>(Almacenamiento de archivos)"]
+    end
+
+    OpenAI["OpenAI GPT-3.5 Turbo<br/>(API REST)"]
+
+    User -->|"Interactúa"| UI
+    UI -->|"Eventos"| BLoC
+    BLoC -->|"Llama"| Services
+
+    Services -->|"Autenticación"| Auth
+    Services -->|"CRUD de datos"| Firestore
+    Services -->|"Imágenes"| Storage
+    Services -->|"HTTP/JSON"| OpenAI
+
+    Auth -->|"Tokens"| Services
+    Firestore -->|"Datos en tiempo real"| Services
+    Storage -->|"URLs"| Services
+    OpenAI -->|"Respuestas JSON"| Services
+
+    style User fill:#e1f5ff
+    style FlutterApp fill:#90caf9
+    style FirebaseServices fill:#fff9c4
+    style OpenAI fill:#c8e6c9

@@ -1,0 +1,20 @@
+graph TB
+    User["👤 Usuario<br/>(Estudiante de Medicina)"]
+
+    System["📱 App de Neuroanatomía<br/>(Flutter)"]
+
+    Firebase["☁️ Firebase<br/>(Backend as a Service)"]
+    OpenAI["🤖 OpenAI API<br/>(GPT-3.5 Turbo)"]
+
+    User -->|"Visualiza estructuras<br/>cerebrales y estudia"| System
+
+    System -->|"Autenticación,<br/>almacenamiento de datos"| Firebase
+    System -->|"Genera quizzes<br/>personalizados"| OpenAI
+
+    Firebase -->|"Datos de usuario,<br/>notas, progreso"| System
+    OpenAI -->|"Preguntas y respuestas<br/>basadas en notas"| System
+
+    style User fill:#e1f5ff
+    style System fill:#90caf9
+    style Firebase fill:#fff9c4
+    style OpenAI fill:#c8e6c9

@@ -1,0 +1,42 @@
+graph TD
+    Start([Inicio de App])
+
+    Start --> Auth{Usuario<br/>autenticado?}
+
+    Auth -->|No| AuthPage["🔐 AuthPage<br/>(Login/Register)"]
+    Auth -->|Sí| HomePage["🏠 HomePage<br/>(Vista principal)"]
+
+    AuthPage -->|Login exitoso| HomePage
+
+    HomePage -->|Tap 'Diagramas'| DiagramasPage["📊 DiagramasPage<br/>(Lista de diagramas)"]
+    HomePage -->|Tap 'Mis Notas'| NotesPage["📝 NotesPage<br/>(Lista de notas)"]
+    HomePage -->|Interacción cerebro| HomePage_Panel["Panel desplegado<br/>(Detalles segmento)"]
+
+    HomePage_Panel -->|Tap 'Ver otros cortes'| HomePage
+
+    DiagramasPage -->|Tap diagrama| DiagramaDetailPage["🔍 DiagramaDetailPage<br/>(Vista detallada)"]
+    DiagramaDetailPage -->|Back| DiagramasPage
+    DiagramasPage -->|Back| HomePage
+
+    NotesPage -->|Tap 'Crear nota'| NoteFormPage["✏️ NoteFormPage<br/>(Formulario)"]
+    NotesPage -->|Tap nota| NoteDetailPage["📄 NoteDetailPage<br/>(Ver/Editar)"]
+    NotesPage -->|Tap 'Generar Quiz'| QuizPage["❓ QuizPage<br/>(Quiz generado)"]
+
+    NoteFormPage -->|Guardar| NotesPage
+    NoteFormPage -->|Cancelar| NotesPage
+
+    NoteDetailPage -->|Back| NotesPage
+    NoteDetailPage -->|Editar| NoteFormPage
+
+    QuizPage -->|Finalizar| QuizResultsPage["📊 QuizResultsPage<br/>(Resultados)"]
+    QuizResultsPage -->|Back| NotesPage
+
+    NotesPage -->|Back| HomePage
+
+    HomePage -->|Logout| AuthPage
+
+    style AuthPage fill:#ffcdd2
+    style HomePage fill:#c5e1a5
+    style DiagramasPage fill:#b3e5fc
+    style NotesPage fill:#fff9c4
+    style QuizPage fill:#ce93d8

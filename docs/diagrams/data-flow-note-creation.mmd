@@ -1,0 +1,37 @@
+sequenceDiagram
+    participant Usuario
+    participant NoteFormPage
+    participant NotesService
+    participant Firestore
+    participant UI
+
+    Usuario->>NoteFormPage: Rellena formulario<br/>(título, contenido, imagen)
+    Usuario->>NoteFormPage: Presiona "Guardar"
+
+    NoteFormPage->>NoteFormPage: Valida campos requeridos
+
+    alt Validación exitosa
+        NoteFormPage->>NotesService: createNote(title, content, image)
+
+        NotesService->>NotesService: Construye objeto Note
+        NotesService->>NotesService: Agrega timestamp
+
+        NotesService->>Firestore: Escribe en users/{uid}/notes/
+
+        alt Escritura exitosa
+            Firestore-->>NotesService: DocumentReference
+            NotesService-->>NoteFormPage: Success
+            NoteFormPage->>UI: Muestra SnackBar de éxito
+            NoteFormPage->>NoteFormPage: Navigator.pop()
+            NoteFormPage-->>Usuario: Regresa a NotesPage
+        else Error de Firestore
+            Firestore-->>NotesService: FirebaseException
+            NotesService-->>NoteFormPage: Error
+            NoteFormPage->>UI: Muestra SnackBar de error
+            NoteFormPage-->>Usuario: Permanece en formulario
+        end
+
+    else Validación fallida
+        NoteFormPage->>UI: Muestra mensajes de validación
+        NoteFormPage-->>Usuario: Resalta campos requeridos
+    end

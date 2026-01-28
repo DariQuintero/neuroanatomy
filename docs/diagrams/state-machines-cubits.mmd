@@ -1,0 +1,39 @@
+stateDiagram-v2
+    [*] --> AuthInitial
+
+    state "AuthCubit States" as AuthFlow {
+        AuthInitial --> AuthLoading: login()
+        AuthLoading --> AuthSuccess: loginSuccess()
+        AuthLoading --> AuthFailure: loginError()
+        AuthSuccess --> AuthLoading: logout()
+        AuthSuccess --> ProfileUpdating: updateProfile()
+        ProfileUpdating --> AuthSuccess: updateSuccess()
+        ProfileUpdating --> AuthFailure: updateError()
+        AuthFailure --> AuthLoading: retry()
+        AuthLoading --> [*]: dispose()
+    }
+
+    [*] --> CortesInitial
+
+    state "CortesCubit States" as CortesFlow {
+        CortesInitial --> CortesLoading: loadCortes()
+        CortesLoading --> CortesLoaded: loadSuccess()
+        CortesLoading --> CortesError: loadError()
+        CortesLoaded --> CortesLoaded: selectSegmento()
+        CortesLoaded --> CortesLoading: refreshCortes()
+        CortesError --> CortesLoading: retry()
+        CortesLoading --> [*]: dispose()
+    }
+
+    [*] --> QuizInitial
+
+    state "QuizCubit States" as QuizFlow {
+        QuizInitial --> QuizLoading: generateQuiz()
+        QuizLoading --> QuizLoaded: quizGenerated()
+        QuizLoading --> QuizError: generationError()
+        QuizLoaded --> QuizLoaded: submitAnswer()
+        QuizLoaded --> QuizFinished: completeQuiz()
+        QuizError --> QuizLoading: retry()
+        QuizFinished --> QuizInitial: reset()
+        QuizLoading --> [*]: dispose()
+    }

@@ -1,0 +1,27 @@
+graph TB
+    subgraph Presentation["📱 Capa de Presentación"]
+        Pages["Pages<br/>(AuthPage, HomePage,<br/>DiagramasPage, NotesPage)"]
+        Widgets["Widgets<br/>(InteractiveIlustracion,<br/>EstructuraDetailsPanel,<br/>QuizWidget)"]
+    end
+
+    subgraph BusinessLogic["⚙️ Capa de Lógica de Negocio"]
+        Cubits["Cubits (BLoC)<br/>(AuthCubit, CortesCubit,<br/>QuizCubit, DiagramasCubit)"]
+        Models["Modelos<br/>(Corte, Diagrama,<br/>SegmentoBrain, Quiz)"]
+    end
+
+    subgraph DataLayer["💾 Capa de Datos"]
+        Services["Servicios<br/>(AuthService, CortesService,<br/>NotesService, ChatGPTService)"]
+        Repositories["Repositorios<br/>(FirebaseFirestore,<br/>CloudStorage)"]
+        External["APIs Externas<br/>(Firebase, OpenAI)"]
+    end
+
+    Pages --> Widgets
+    Widgets --> Cubits
+    Cubits --> Models
+    Cubits --> Services
+    Services --> Repositories
+    Repositories --> External
+
+    style Presentation fill:#e3f2fd
+    style BusinessLogic fill:#fff3e0
+    style DataLayer fill:#e8f5e9

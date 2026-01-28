@@ -1,0 +1,50 @@
+graph TD
+    Root["🗄️ Firestore Database"]
+
+    Root --> Cortes["cortes/ (collection)"]
+    Root --> Diagramas["diagramas/ (collection)"]
+    Root --> Users["users/ (collection)"]
+
+    Cortes --> CorteDoc["corteSagital (document)<br/>corteFrontal (document)<br/>corteHorizontal (document)"]
+
+    CorteDoc --> CorteFields["Fields:<br/>- id: string<br/>- name: string<br/>- imageUrl: string<br/>- order: int"]
+
+    CorteDoc --> Segmentos["segmentos/ (subcollection)"]
+
+    Segmentos --> SegmentoDoc["segmento1 (document)<br/>segmento2 (document)<br/>..."]
+
+    SegmentoDoc --> SegmentoFields["Fields:<br/>- id: string<br/>- name: string<br/>- descripcion: string<br/>- corteId: string<br/>- paths: array<br/>- color: string<br/>- otherCortes: array"]
+
+    Diagramas --> DiagramaDoc["diagrama1 (document)<br/>diagrama2 (document)<br/>..."]
+
+    DiagramaDoc --> DiagramaFields["Fields:<br/>- id: string<br/>- name: string<br/>- imageUrl: string<br/>- category: string<br/>- order: int"]
+
+    DiagramaDoc --> Vistas["vistas/ (subcollection)"]
+
+    Vistas --> VistaDoc["vista1 (document)<br/>vista2 (document)<br/>..."]
+
+    VistaDoc --> VistaFields["Fields:<br/>- id: string<br/>- name: string<br/>- imageUrl: string<br/>- segments: array"]
+
+    Users --> UserDoc["userId (document)"]
+
+    UserDoc --> UserFields["Fields:<br/>- uid: string<br/>- email: string<br/>- displayName: string<br/>- photoURL: string<br/>- createdAt: timestamp"]
+
+    UserDoc --> Notes["notes/ (subcollection)"]
+    UserDoc --> Activities["activities/ (subcollection)"]
+
+    Notes --> NoteDoc["noteId (document)"]
+
+    NoteDoc --> NoteFields["Fields:<br/>- id: string<br/>- title: string<br/>- content: string<br/>- imageUrl: string<br/>- createdAt: timestamp<br/>- updatedAt: timestamp"]
+
+    Activities --> ActivityDoc["activityId (document)"]
+
+    ActivityDoc --> ActivityFields["Fields:<br/>- id: string<br/>- type: string<br/>- timestamp: timestamp<br/>- data: map"]
+
+    style Root fill:#ffeb3b
+    style Cortes fill:#90caf9
+    style Diagramas fill:#90caf9
+    style Users fill:#90caf9
+    style Segmentos fill:#ce93d8
+    style Vistas fill:#ce93d8
+    style Notes fill:#ce93d8
+    style Activities fill:#ce93d8

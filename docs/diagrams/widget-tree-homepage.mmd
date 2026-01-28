@@ -1,0 +1,58 @@
+graph TD
+    HomePage["HomePage"]
+
+    HomePage --> BlocProvider["BlocProvider<br/>(CortesCubit)"]
+
+    BlocProvider --> Scaffold["Scaffold"]
+
+    Scaffold --> AppBar["AppBar"]
+    Scaffold --> Body["Body"]
+
+    AppBar --> Title["Text: 'Neuroanatomía'"]
+    AppBar --> Actions["Actions"]
+    Actions --> DiagramasButton["IconButton<br/>(Diagramas)"]
+    Actions --> NotesButton["IconButton<br/>(Notas)"]
+    Actions --> LogoutButton["IconButton<br/>(Logout)"]
+
+    Body --> BlocBuilder["BlocBuilder<br/>(CortesCubit)"]
+
+    BlocBuilder --> SlidingPanel["SlidingUpPanel"]
+
+    SlidingPanel --> Panel["Panel<br/>(Contenido deslizante)"]
+    SlidingPanel --> Collapsed["Collapsed<br/>(Vista minimizada)"]
+    SlidingPanel --> PanelBody["Body<br/>(Vista principal)"]
+
+    Panel --> BlocBuilder2["BlocBuilder<br/>(Monitorea selectedSegmento)"]
+    BlocBuilder2 --> DetailsPanel["EstructuraDetailsPanel"]
+
+    DetailsPanel --> SegmentName["Text<br/>(Nombre estructura)"]
+    DetailsPanel --> SegmentDesc["Text<br/>(Descripción)"]
+    DetailsPanel --> OtherCortesSection["Sección 'Ver otros cortes'"]
+
+    OtherCortesSection --> OtherCortesGrid["OtherCortesGrid"]
+    OtherCortesGrid --> GridItem["GridView.builder"]
+    GridItem --> CorteCard["Card<br/>(Otros cortes)"]
+
+    Collapsed --> CollapsedBar["Container<br/>(Barra para deslizar)"]
+    CollapsedBar --> CollapsedText["Text: 'Desliza hacia arriba'"]
+
+    PanelBody --> Stack["Stack"]
+
+    Stack --> Background["Container<br/>(Fondo)"]
+    Stack --> Interactive["InteractiveIlustracion"]
+    Stack --> Navigation["NavigationButtons"]
+
+    Interactive --> GestureDetector["GestureDetector"]
+    GestureDetector --> CustomPaint["CustomPaint"]
+    CustomPaint --> BrainPainter["BrainPainter<br/>(Dibuja cerebro)"]
+
+    BrainPainter --> PathDrawing["canvas.drawPath()<br/>(Por cada segmento)"]
+
+    Navigation --> PrevButton["IconButton<br/>(Anterior)"]
+    Navigation --> NextButton["IconButton<br/>(Siguiente)"]
+
+    style HomePage fill:#c5e1a5
+    style BlocProvider fill:#90caf9
+    style Scaffold fill:#fff9c4
+    style Interactive fill:#ffccbc
+    style DetailsPanel fill:#ce93d8

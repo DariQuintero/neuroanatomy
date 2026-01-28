@@ -1,0 +1,25 @@
+sequenceDiagram
+    participant Usuario
+    participant InteractiveIlustracion
+    participant CortesCubit
+    participant UI_Panel
+
+    Usuario->>InteractiveIlustracion: Toca segmento cerebral
+    InteractiveIlustracion->>InteractiveIlustracion: Detecta hit en Path
+    InteractiveIlustracion->>CortesCubit: selectSegmento(segmentoId)
+
+    CortesCubit->>CortesCubit: Actualiza selectedSegmento en state
+    CortesCubit->>CortesCubit: Emite CortesLoaded con nuevo estado
+
+    CortesCubit-->>UI_Panel: Stream notifica cambio
+    UI_Panel->>UI_Panel: Reconstruye BlocBuilder
+
+    UI_Panel->>UI_Panel: Abre SlidingUpPanel
+    UI_Panel->>UI_Panel: Muestra EstructuraDetailsPanel
+
+    UI_Panel-->>Usuario: Panel deslizado con detalles:<br/>- Nombre estructura<br/>- Descripción<br/>- Otros cortes relacionados
+
+    Usuario->>UI_Panel: Toca "Ver otros cortes"
+    UI_Panel->>CortesCubit: Solicita lista de cortes relacionados
+    CortesCubit-->>UI_Panel: Devuelve otherCortes[]
+    UI_Panel-->>Usuario: Muestra OtherCortesGrid

@@ -1,0 +1,54 @@
+sequenceDiagram
+    participant Usuario
+    participant QuizPage
+    participant QuizCubit
+    participant ChatGPTService
+    participant OpenAI_API
+
+    Usuario->>QuizPage: Selecciona notas y presiona<br/>"Generar Quiz"
+    QuizPage->>QuizCubit: generateQuiz(selectedNotes)
+
+    QuizCubit->>QuizCubit: Emite QuizLoading()
+    QuizCubit-->>QuizPage: Muestra indicador de carga
+
+    QuizCubit->>QuizCubit: Concatena contenido de notas
+    QuizCubit->>ChatGPTService: generateQuiz(notesContent)
+
+    ChatGPTService->>ChatGPTService: Construye prompt con instrucciones
+    ChatGPTService->>OpenAI_API: POST /chat/completions<br/>(model: gpt-3.5-turbo)
+
+    alt Respuesta exitosa
+        OpenAI_API-->>ChatGPTService: JSON con preguntas
+        ChatGPTService->>ChatGPTService: Parsea JSON response
+        ChatGPTService->>ChatGPTService: Valida estructura<br/>(questions, options, correctAnswer)
+
+        alt JSON válido
+            ChatGPTService-->>QuizCubit: Quiz object
+            QuizCubit->>QuizCubit: Emite QuizLoaded(quiz)
+            QuizCubit-->>QuizPage: Quiz disponible
+            QuizPage-->>Usuario: Muestra primera pregunta
+
+            Usuario->>QuizPage: Responde preguntas
+            QuizPage->>QuizCubit: submitAnswer(questionIndex, answer)
+            QuizCubit->>QuizCubit: Valida respuesta
+            QuizCubit-->>QuizPage: Feedback (correcto/incorrecto)
+
+            Usuario->>QuizPage: Completa todas las preguntas
+            QuizCubit->>QuizCubit: Emite QuizFinished(score)
+            QuizCubit-->>QuizPage: Resultados finales
+            QuizPage-->>Usuario: Muestra score y resumen
+
+        else JSON inválido
+            ChatGPTService-->>QuizCubit: Error parsing
+            QuizCubit->>QuizCubit: Emite QuizError()
+            QuizCubit-->>QuizPage: Error message
+            QuizPage-->>Usuario: Muestra error y retry
+        end
+
+    else Error de API
+        OpenAI_API-->>ChatGPTService: HTTP Error
+        ChatGPTService-->>QuizCubit: Exception
+        QuizCubit->>QuizCubit: Emite QuizError()
+        QuizCubit-->>QuizPage: Error message
+        QuizPage-->>Usuario: Muestra error de conexión
+    end
